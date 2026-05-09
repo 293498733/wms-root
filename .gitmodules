@@ -1,0 +1,6 @@
+[submodule "ruo-yi-wms-vue-master"]
+	path = ruo-yi-wms-vue-master
+	url = https://github.com/293498733/wms-frontend.git
+[submodule "wms-ruoyi-master"]
+	path = wms-ruoyi-master
+	url = https://github.com/293498733/wms-backend.git
