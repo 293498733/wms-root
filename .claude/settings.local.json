@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(gstack)",
+      "Skill(office-hours)",
+      "Bash(git -C \"D:/MyPrj/进销存\" log --oneline -20)",
+      "Bash(git -C \"D:/MyPrj/进销存\" branch -a)",
+      "Bash(git -C \"D:/MyPrj/进销存\" remote -v)"
+    ]
+  }
+}

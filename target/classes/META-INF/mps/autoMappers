@@ -1,0 +1,4 @@
+com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo
+com.ruoyi.wms.domain.bo.MovementOrderDetailBo
+com.ruoyi.wms.domain.bo.ShipmentOrderDetailBo
+com.ruoyi.system.domain.bo.SysOperLogBo

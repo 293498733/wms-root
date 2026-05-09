@@ -1,0 +1,21 @@
+﻿# 自动生成，请勿手动编辑
+
+project_root: "D:\MyPrj\进销存"
+template_dir: "D:\MyPrj\ai-dev-platform"
+prompts_dir: "D:\MyPrj\ai-dev-platform\prompts"
+
+requirement: "D:\MyPrj\进销存\.ai-dev\requirement.md"
+profile: "D:\MyPrj\进销存\.ai-dev\profile.yml"
+
+outputs:
+  analysis: "D:\MyPrj\进销存\.ai-dev\outputs\01-analysis.md"
+  product_review: "D:\MyPrj\进销存\.ai-dev\outputs\02-product-review.md"
+  engineering_plan: "D:\MyPrj\进销存\.ai-dev\outputs\03-engineering-plan.md"
+  change_list: "D:\MyPrj\进销存\.ai-dev\outputs\04-change-list.md"
+  code_review: "D:\MyPrj\进销存\.ai-dev\outputs\05-code-review.md"
+  security_review: "D:\MyPrj\进销存\.ai-dev\outputs\06-security-review.md"
+  delivery_report: "D:\MyPrj\进销存\.ai-dev\outputs\07-delivery-report.md"
+  pipeline_stage: "D:\MyPrj\进销存\.ai-dev\.pipeline_stage"
+
+gstack:
+  enabled: true
