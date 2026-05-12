@@ -1,0 +1,13 @@
+10:14:22 [INFO ] 项目: D:\MyPrj\进销存
+10:14:22 [INFO ] 从断点恢复: 确认任务拆分 已完成 → 任务图执行
+10:14:22 [WARNING] Working tree is dirty, creating auto-stash
+10:14:22 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+10:14:22 [WARNING] [goose] Loading recipe: Task - 项目技术栈与环境确认
+10:14:22 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:14:22 [WARNING] [goose] Parameters used to load this recipe:
+10:15:07 [WARNING] Task task-env-confirm completed but missing: ['.ai-dev/checklist-env.md']
+10:15:07 [WARNING] Working tree is dirty, creating auto-stash
+10:15:07 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+10:15:07 [WARNING] [goose] Loading recipe: Task - 修复前端字典 Key 前缀不一致问题
+10:15:07 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:15:07 [WARNING] [goose] Parameters used to load this recipe:

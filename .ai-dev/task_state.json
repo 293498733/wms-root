@@ -1,0 +1,104 @@
+{
+  "task-env-confirm": {
+    "status": "completed",
+    "started_at": "2026-05-12T10:14:22.670381",
+    "completed_at": "2026-05-12T10:15:07.124009",
+    "retries": 0,
+    "commit_hash": "",
+    "output_files_produced": [
+      ".ai-dev/checklist-env.md"
+    ],
+    "error_message": null,
+    "notes": null
+  },
+  "task-db-dict-fix": {
+    "status": "in_progress",
+    "started_at": "2026-05-12T10:15:07.290041",
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-optimize-sku-query": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-empty-state": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-detail-limit": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-unit-test": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-start-process": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-confirm-reject": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-subpage-pagination": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-edge-cases": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  }
+}

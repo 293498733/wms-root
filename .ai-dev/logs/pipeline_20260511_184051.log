@@ -1,0 +1,110 @@
+18:40:51 [INFO ] 项目: D:\MyPrj\进销存
+18:40:51 [INFO ] 开始全新管线
+18:40:51 [INFO ] goose run --recipe 01-refine-requirement.yaml --max-turns 80
+18:40:51 [WARNING] [goose] Loading recipe: 阶段 1 - 需求精炼
+18:40:51 [WARNING] [goose] Description: 将用户的原始需求转化为结构化的、AI 可直接执行的需求文档
+18:40:51 [WARNING] [goose] Parameters used to load this recipe:
+18:43:06 [INFO ] 需求精炼 — 完成 (2m15s)
+18:43:06 [INFO ] goose run --recipe 02-analysis.yaml --max-turns 100
+18:43:06 [WARNING] [goose] Loading recipe: 阶段 2 - 需求分析
+18:43:06 [WARNING] [goose] Description: 拆解功能点、数据流、界面逻辑，列出所有不确定项
+18:43:06 [WARNING] [goose] Parameters used to load this recipe:
+18:46:39 [INFO ] 需求分析 — 完成 (3m33s)
+18:46:39 [INFO ] goose run --recipe 03-design.yaml --max-turns 120
+18:46:39 [WARNING] [goose] Loading recipe: 阶段 3 - 工程方案
+18:46:39 [WARNING] [goose] Description: 基于已确认的需求和需求分析，做架构设计、接口定义、数据模型
+18:46:39 [WARNING] [goose] Parameters used to load this recipe:
+18:49:39 [INFO ] 工程方案 — 完成 (2m59s)
+18:49:39 [INFO ] goose run --recipe 03.5-decompose.yaml --max-turns 80
+18:49:39 [WARNING] [goose] Loading recipe: 阶段 3.5 - 任务拆分
+18:49:39 [WARNING] [goose] Description: 将工程方案拆分为原子化的独立执行任务，每个任务可独立在新 AI 会话中执行
+18:49:39 [WARNING] [goose] Parameters used to load this recipe:
+18:53:21 [INFO ] 任务拆分 — 完成 (3m42s)
+18:53:22 [WARNING] Working tree is dirty, creating auto-stash
+18:53:22 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:53:22 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:22 [ERROR] goose exited with code 1
+18:53:22 [WARNING] Working tree is dirty, creating auto-stash
+18:53:22 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:53:22 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:22 [ERROR] goose exited with code 1
+18:53:22 [WARNING] Working tree is dirty, creating auto-stash
+18:53:22 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:53:22 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:22 [ERROR] goose exited with code 1
+18:53:22 [WARNING] Working tree is dirty, creating auto-stash
+18:53:22 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+18:53:22 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:22 [ERROR] goose exited with code 1
+18:53:22 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+18:53:23 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:23 [ERROR] goose exited with code 1
+18:53:23 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 25
+18:53:23 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:23 [ERROR] goose exited with code 1
+18:53:23 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 25
+18:53:23 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:23 [ERROR] goose exited with code 1
+18:53:23 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+18:53:23 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:23 [ERROR] goose exited with code 1
+18:53:23 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40
+18:53:23 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:23 [ERROR] goose exited with code 1
+18:53:23 [WARNING] Working tree is dirty, creating auto-stash
+18:53:23 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:24 [WARNING] Working tree is dirty, creating auto-stash
+18:53:24 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:24 [WARNING] Working tree is dirty, creating auto-stash
+18:53:24 [INFO ] task: goose run --recipe task-template.yaml --max-turns 45
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:24 [WARNING] Working tree is dirty, creating auto-stash
+18:53:24 [INFO ] task: goose run --recipe task-template.yaml --max-turns 45
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:24 [WARNING] Working tree is dirty, creating auto-stash
+18:53:24 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:24 [WARNING] Working tree is dirty, creating auto-stash
+18:53:24 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+18:53:24 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:24 [ERROR] goose exited with code 1
+18:53:25 [WARNING] Working tree is dirty, creating auto-stash
+18:53:25 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+18:53:25 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:25 [ERROR] goose exited with code 1
+18:53:25 [WARNING] Working tree is dirty, creating auto-stash
+18:53:25 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+18:53:25 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:25 [ERROR] goose exited with code 1
+18:53:25 [WARNING] Working tree is dirty, creating auto-stash
+18:53:25 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40
+18:53:25 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:25 [ERROR] goose exited with code 1
+18:53:25 [WARNING] Working tree is dirty, creating auto-stash
+18:53:25 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40
+18:53:25 [WARNING] [goose] Error: Invalid recipe: could not find expected ':'
+18:53:25 [ERROR] goose exited with code 1
+18:53:25 [INFO ] 任务图执行完成 (0m3s)
+18:53:25 [INFO ] goose run --recipe 05-build.yaml --max-turns 60
+18:53:25 [WARNING] [goose] Loading recipe: 阶段 5 - 编译 + 测试验证
+18:53:25 [WARNING] [goose] Description: 自动编译项目并运行现有测试
+18:53:25 [WARNING] [goose] Parameters used to load this recipe:
+18:57:31 [INFO ] 编译与测试 — 完成 (4m5s)
+18:57:31 [INFO ] goose run --recipe 06-review.yaml --max-turns 80
+18:57:31 [WARNING] [goose] Error: Please provide the following parameters in the command line: --params input_change_list=your_value
+18:57:31 [ERROR] goose exited with code 1
+18:57:31 [INFO ] goose run --recipe 07-delivery.yaml --max-turns 40
+18:57:31 [WARNING] [goose] Error: Please provide the following parameters in the command line: --params input_change_list=your_value
+18:57:31 [ERROR] goose exited with code 1

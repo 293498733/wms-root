@@ -1,0 +1,541 @@
+version: "1.0"
+project: "进销存-WMS-返修通知单核对明细UI优化"
+created_at: "2026-05-11T18:50:00+08:00"
+total_estimated_turns: 310
+tasks:
+  # ============================================================================
+  # 基础设施层 — 配置 / 环境确认
+  # ============================================================================
+  - id: task-env-confirm
+    name: "项目技术栈与环境确认"
+    description: "确认后端和前端的技术栈版本、依赖是否完整，确保构建和运行环境就绪"
+    category: config
+    estimated_turns: 20
+    priority: P0
+    depends_on: []
+    parallel_group: "infra"
+    input_files:
+      - "wms-ruoyi-master/pom.xml"
+      - "ruo-yi-wms-vue-master/package.json"
+      - "wms-ruoyi-master/ruoyi-admin-wms/pom.xml"
+      - "wms-ruoyi-master/正式环境代码/application.yml"
+    output_files:
+      - ".ai-dev/checklist-env.md"
+    context_notes: |
+      确认技术栈就绪，不修改任何源代码。只需读取配置文件并输出检查清单。
+      
+      技术栈：
+      - 后端：Spring Boot 3.2.6 + JDK 17 + MyBatis-Plus 3.5.6 + MapStruct Plus 1.3.6 + Lombok 1.18.32 + Hutool 5.8.27 + Sa-Token 1.37.0
+      - 前端：Vue 3.2.45 + Element Plus 2.2.27 + Vite + Pinia
+      - 数据库：MySQL（通过 MyBatis-Plus 操作）
+      - 缓存：Redis（用于入库单号自增 + @RepeatSubmit 防重）
+      
+      检查要点：
+      1. pom.xml 中所有依赖是否可解析（确认版本号已定）
+      2. package.json 中 npm 依赖是否完整（element-plus, vue-router, pinia, axios 等）
+      3. 确认 JDK 17、Node.js 版本要求
+      4. 确认 application.yml 中数据库、Redis 配置项
+      5. 确保 MapStruct Plus 注解处理器已配置（annotationProcessorPaths）
+      6. 输出 checklist-env.md 作为后续任务的环境参考
+    reference_docs:
+      - "03-plan.md"
+    retry_limit: 1
+    timeout_minutes: 10
+
+  - id: task-db-dict-fix
+    name: "修复前端字典 Key 前缀不一致问题"
+    description: "前端 index.vue 中 useDict 使用了错误的字典 key（wms_repair_notice_status vs repair_notice_status），导致字典数据加载不到"
+    category: frontend
+    estimated_turns: 20
+    priority: P1
+    depends_on:
+      - "task-env-confirm"
+    parallel_group: "opt-group-a"
+    input_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
+    output_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
+    context_notes: |
+      修复字典 key 前缀问题。
+      
+      问题描述：
+      前端 index.vue L76 使用 proxy.useDict("wms_repair_notice_status", "wms_repair_handover_status")
+      但数据库中 sys_dict_type 表的 type 值为 "repair_notice_status" 和 "handover_status"（无 wms_ 前缀）
+      这会导致 useDict 查询不到字典数据，status 和 handoverStatus 列在前端显示为空。
+      
+      修改内容：
+      将 index.vue 中 L76 的 useDict 调用改为：
+      proxy.useDict("repair_notice_status", "handover_status")
+      
+      只改这一行，不修改其他任何代码。
+      
+      约束：
+      - 不允许修改接口路径或引入新依赖
+      - 只修改前端 Vue 文件
+    reference_docs:
+      - "03-plan.md"
+      - "02-analysis.md"
+    retry_limit: 2
+    timeout_minutes: 10
+
+  # ============================================================================
+  # 后端优化 — 消除重复 SKU 查询
+  # ============================================================================
+  - id: task-backend-optimize-sku-query
+    name: "消除后端 buildCheckDetailItems 中重复的 SKU 数据库查询"
+    description: "RepairNoticeService.buildCheckDetailItems() 中重复调用 itemSkuService.queryItemSkuMapVosByIds()，应复用 RepairNoticeDetailVo 中已填充的 SKU/物品数据"
+    category: backend-api
+    estimated_turns: 35
+    priority: P1
+    depends_on:
+      - "task-env-confirm"
+    parallel_group: "opt-group-b"
+    input_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeDetailService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairNoticeDetailVo.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/ItemSkuMapVo.java"
+    output_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+    context_notes: |
+      消除重复 SKU 查询的性能优化。
+      
+      当前问题（02-analysis.md 4.3 节指出）：
+      RepairNoticeDetailService.queryByNoticeId() 返回的 RepairNoticeDetailVo 已经通过 fillSkuAndItemInfo() 
+      填充了 itemSku 和 item 关联对象，但 buildCheckDetailItems() 方法中又重新调用
+      itemSkuService.queryItemSkuMapVosByIds(skuIds) 查询了一遍同样的数据，导致不必要的数据库查询。
+      
+      修改方案：
+      1. 修改 RepairNoticeService.buildCheckDetailItems() 方法的签名或内部逻辑
+      2. 参数从 List<RepairNoticeDetailVo> details 传入，直接读取 detail.getItemSku() 和 detail.getItem() 
+         来获取 skuName、barcode、itemName，而不是从 skuMap 中获取
+      3. 去掉 itemSkuService.queryItemSkuMapVosByIds(skuIds) 调用
+      4. 注意 RepairNoticeDetailVo 中的 itemSku 和 item 字段类型：确认字段名称为 itemSku 和 item（通过 getter/setter）
+      5. ItemSkuMapVo 包含 getItemSku() 返回 WmsItemSku 实体（含 skuName、barcode），getItem() 返回 WmsItem 实体（含 itemName、id）
+         RepairNoticeDetailVo 中同样有 getItemSku() 返回 WmsItemSku，getItem() 返回 WmsItem
+      6. 确保不影响 confirmCheck() 方法中调用的 buildCheckDetailItems()，因为 confirmCheck 也调用了此方法
+      
+      技术约束：
+      - 只修改 RepairNoticeService.java 中的 buildCheckDetailItems() 方法
+      - 不可修改其他 Service、Controller、Mapper、Entity 类
+      - 保持 confirmCheck() 中调用 buildCheckDetailItems() 的逻辑不变
+      - 保持 buildGroupedDetails() 方法不变
+      - 保持 public 方法签名不变
+    reference_docs:
+      - "03-plan.md"
+      - "02-analysis.md"
+    retry_limit: 2
+    timeout_minutes: 20
+
+  # ============================================================================
+  # 前端优化 — 空明细状态提示
+  # ============================================================================
+  - id: task-frontend-empty-state
+    name: "增加核对明细空状态提示"
+    description: "当通知单无可核对的物品明细时，弹窗展示空表格无提示信息，需增加 el-empty 空状态文字提示"
+    category: frontend
+    estimated_turns: 25
+    priority: P2
+    depends_on:
+      - "task-env-confirm"
+    parallel_group: "opt-group-a"
+    input_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    output_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    context_notes: |
+      增加空状态提示。
+      
+      当前行为：
+      当 RepairNoticeCheckDetailVo.groupedDetails 为空列表时，前端弹窗显示空表格（无数据行），没有提示信息。
+      
+      期望行为：
+      在 groupedDetails 为空时，显示 Element Plus 的 el-empty 组件或自定义文字提示"该通知单无可核对的物品明细"。
+      
+      修改位置：
+      RepairNoticeCheckDialog.vue 中，checkDetail 对象存在但 groupedDetails 为空时，在表格位置显示空状态。
+      
+      实现方案：
+      方式一（推荐）：在 <div v-if="checkDetail"> 内部增加 v-if 判断
+      <template v-if="groupedDetails.length === 0">
+        <el-empty description="该通知单无可核对的物品明细" />
+      </template>
+      <template v-else>
+        <!-- 现有表格 -->
+      </template>
+      
+      方式二：在 el-table 上使用 v-if 控制显示，空时显示 el-empty
+      
+      使用 Element Plus 2.2.27 版本，el-empty 组件需要显式 import（如果未全局注册）。
+      检查 main.js 中是否已全局注册 Element Plus（通过 app.use(ElementPlus)），如是则无需额外 import。
+      
+      约束：
+      - 不修改其他文件
+      - 保持弹窗标题和说明文字不受影响
+    reference_docs:
+      - "03-plan.md"
+      - "02-analysis.md"
+    retry_limit: 2
+    timeout_minutes: 15
+
+  # ============================================================================
+  # 后端 — 增加最大明细数限制（性能防护）
+  # ============================================================================
+  - id: task-backend-detail-limit
+    name: "后端增加核对明细最大数量限制"
+    description: "当 repair_notice_detail 记录达数万条时，buildCheckDetail 全量加载可能导致 OOM，增加最大明细数限制（5000条）"
+    category: backend-api
+    estimated_turns: 30
+    priority: P2
+    depends_on:
+      - "task-env-confirm"
+    parallel_group: "opt-group-b"
+    input_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeDetailService.java"
+    output_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+    context_notes: |
+      增加后端性能防护限制。
+      
+      风险场景：
+      当 repair_notice_detail 记录数达到数万条时，RepairNoticeService.buildCheckDetail() 全量加载明细到内存
+      进行分组操作（Collectors.groupingBy），可能导致堆内存溢出（OOM）。
+      
+      修改方案：
+      1. 在 RepairNoticeService 中定义一个常量 MAX_CHECK_DETAIL_LIMIT = 5000（或通过配置注入）
+      2. 在 buildCheckDetail() 方法中，查询明细后检查数量
+      3. 如果 details.size() > MAX_CHECK_DETAIL_LIMIT，抛出 ServiceException
+         "该通知单物品明细数量超过上限（{limit}条），请分批处理"
+      4. 不影响其他方法（如 confirmCheck 中调用的 buildCheckDetailItems）
+      
+      修改位置：
+      RepairNoticeService.java
+      - 添加常量 private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
+      - 在 buildCheckDetail() 中，查询 details 后立即检查
+      
+      约束：
+      - 只修改 RepairNoticeService.java
+      - 异常信息中包含实际数量和上限值
+      - 不影响 confirmCheck() 流程（confirmCheck 中也有查询，但已在变更状态之后，理论不会超量）
+    reference_docs:
+      - "03-plan.md"
+      - "02-analysis.md"
+    retry_limit: 2
+    timeout_minutes: 15
+
+  # ============================================================================
+  # 单元测试 — 后端服务层测试补充
+  # ============================================================================
+  - id: task-backend-unit-test
+    name: "补充 RepairNoticeService 单元测试"
+    description: "为后端新增/修改的方法补充单元测试，包括优化后的 buildCheckDetailItems、最大明细数限制、状态校验等场景"
+    category: test
+    estimated_turns: 40
+    priority: P1
+    depends_on:
+      - "task-backend-optimize-sku-query"
+      - "task-backend-detail-limit"
+    input_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+    output_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java"
+    context_notes: |
+      补充单元测试。
+      
+      现有测试已有 7 个测试用例（RepairNoticeServiceTest.java），覆盖了 buildGroupedDetails 的分组正确性、
+      匹配逻辑、空列表、null skuName、混合匹配、itemName 取值。
+      
+      需要新增的测试用例（基于本次变更）：
+      
+      1. testBuildCheckDetailItems_usesRepairNoticeDetailVoData()
+         - 验证优化后的 buildCheckDetailItems 正确从 RepairNoticeDetailVo 的 itemSku/item 字段读取数据
+         - 不再依赖 ItemSkuMapVo，需要用 Mock 或模拟数据验证
+      
+      2. testStartProcess_withInvalidStatus_shouldThrow()
+         - 验证状态非 "2" 时抛出 ServiceException("只有已提交状态的单据才能开始处理")
+         - 需要 Mock RepairNoticeMapper.selectById() 返回 status="0" 或 "1"
+         - 验证异常消息
+      
+      3. testConfirmCheck_withAllMatchedStatus_shouldSuccess()
+         - 验证全部匹配时 confirmCheck 成功返回入库单 ID
+         - 需要 Mock 多个依赖服务
+      
+      4. testConfirmCheck_withMismatchStatus_shouldThrow()
+         - 验证不匹配时抛出 ServiceException
+         - 需要 Mock 明细数据并模拟实际数量不一致
+      
+      5. testBuildCheckDetail_exceedsLimit_shouldThrow()
+         - 验证明细超过 5000 条时抛出 ServiceException
+         - 需要 Mock repairNoticeDetailService.queryByNoticeId() 返回大列表
+      
+      因为 RepairNoticeService 使用了 @RequiredArgsConstructor 构造器注入，
+      测试中可以通过 new RepairNoticeService(mapper, detailService, skuService, receiptService, ...) 
+      注入 Mock 对象。
+      
+      测试框架：JUnit 5 (org.junit.jupiter) + 无 Mockito 依赖？请检查 pom.xml 中是否有 spring-boot-starter-test。
+      如果无 Mockito，用纯数据构造测试（不 Mock）——现有测试就是这么做的。
+      
+      技术约束：
+      - 使用 JUnit 5 + 纯数据构造方式（不引入 Mockito）
+      - 对于需要 Mock Mapper 的测试，可以构造 RepariNoticeService 并直接传 null（如现有测试），
+        然后测试逻辑方法（buildGroupedDetails, buildCheckDetailItems）而非集成流程方法
+      - 新增方法如 buildCheckDetailItems 也需要反射调用（私有方法）
+      - 标注 @Tag("dev") 和 @DisplayName
+    reference_docs:
+      - "03-plan.md"
+    retry_limit: 2
+    timeout_minutes: 25
+
+  # ============================================================================
+  # 端到端功能验证 — 完整核对流程
+  # ============================================================================
+  - id: task-e2e-start-process
+    name: "端到端验证 — 开始处理/获取核对明细流程"
+    description: "验证点击开始处理→弹窗展示分组汇总表格→展开子表→实际数量编辑→匹配状态实时更新的完整前端交互流程"
+    category: test
+    estimated_turns: 40
+    priority: P0
+    depends_on:
+      - "task-db-dict-fix"
+      - "task-frontend-empty-state"
+    parallel_group: "e2e"
+    input_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
+      - "ruo-yi-wms-vue-master/src/api/wms/repairNotice.js"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java"
+    output_files:
+      - ".ai-dev/outputs/04-e2e-start-process.md"
+    context_notes: |
+      验证开始处理→获取核对明细的完整端到端流程。
+      
+      测试场景（对应 03-plan.md 5.4 手动测试步骤 场景1）：
+      
+      测试准备：
+      1. 在数据库中准备一条 status="2"（已提交）的 repair_notice 记录
+      2. handler_dept_id 设置为当前登录用户的部门ID
+      3. 在 repair_notice_detail 中准备若干条明细记录（至少2个不同 skuName）
+      4. 确保 wms_item_sku 和 wms_item 表中有对应的 SKU/物品数据
+      
+      测试步骤与验收（手动+接口）：
+      
+      1. POST /wms/RepairNotice/startProcess/{id}
+         验证响应 JSON 结构：
+         - noticeNo: String ✓
+         - noticeStatus: "2" ✓
+         - groupedDetails: List ✓（按 skuName 分组）
+         - 每个 GroupedCheckDetail 包含：skuName, itemName, totalExpectedQuantity, totalActualQuantity, matched, items[]
+         - 每个 CheckDetailItem 包含：skuId, skuName, itemName, barcode, expectedQuantity=1, actualQuantity=1, matched=true
+      
+      2. 前端弹窗展示：
+         - 顶部提示文字显示："提示：物品按规格型号分组汇总..."
+         - 通知单号 + 状态显示正确
+         - 仓库下拉列表加载正常
+         - 主表按 skuName 分组，每行显示：序号、物品名称、规格型号、预期数量、实际数量、匹配标签
+         - 匹配标签：全部一致时显示绿色"一致"
+         - 点击展开箭头，展开子表显示具体物品条码
+         - 展开的子表包含：序号、条码、预期数量、实际数量(InputNumber 无加减按钮, 宽度90px)、匹配标签
+      
+      3. 修改实际数量：
+         - 将某条明细的实际数量改为 0
+         - 该行匹配状态立即变为红色"不一致"
+         - 所属分组的 totalActualQuantity 汇总同步减少
+         - 所属分组的 matched 变为 false
+         - 分组行的匹配标签变为红色"不一致"
+         - 改回 1 后状态恢复
+      
+      4. 空明细场景：
+         - 如果 groupedDetails 为空，显示 el-empty 或文字提示"该通知单无可核对的物品明细"
+      
+      输出测试报告到 .ai-dev/outputs/04-e2e-start-process.md
+    reference_docs:
+      - "03-plan.md"
+      - "requirement.md"
+    retry_limit: 2
+    timeout_minutes: 30
+
+  - id: task-e2e-confirm-reject
+    name: "端到端验证 — 核对通过/核对退回全流程"
+    description: "验证核对通过→入库（含仓库校验、匹配校验、状态变更、入库单创建）和核对退回（退回原因、状态回退）的完整流程"
+    category: test
+    estimated_turns: 45
+    priority: P0
+    depends_on:
+      - "task-e2e-start-process"
+    input_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/bo/RepairNoticeConfirmBo.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/bo/RepairNoticeRejectBo.java"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js"
+    output_files:
+      - ".ai-dev/outputs/05-e2e-confirm-reject.md"
+    context_notes: |
+      验证核对通过→入库和核对退回的全流程。
+      
+      测试场景一：核对通过→入库（03-plan.md 5.4 场景1 的 1.8-1.10）
+      
+      接口：POST /wms/RepairNotice/confirmCheck/{noticeId}
+      Body: { warehouseId: Long, details: [{ skuId: Long, quantity: BigDecimal }] }
+      
+      后端校验链：
+      1. ✓ status == "2" — 否则抛 ServiceException
+      2. ✓ handlerDeptId == 当前登录部门 — 否则抛 ServiceException
+      3. ✓ 状态变更为 status="3", handoverStatus="2"
+      4. ✓ 重建分组校验 allMatched — 不匹配抛 ServiceException
+      5. ✓ 校验 details.skuId 均属于本通知单 — 否则抛 ServiceException
+      6. ✓ 调用 ReceiptOrderService.receive()→入库单创建→库存增加→SKU维修状态更新→库存历史记录
+      
+      验收标准（对应 requirement.md 验收标准 7-11）：
+      7. ✓ 仓库必填校验（@NotNull）
+      8. ✓ 不匹配时拒绝入库（后端校验，前端二次确认）
+      9. ✓ 成功后 status→3, handoverStatus→2，自动创建入库单
+      10. ✓ 返回 R<Long>（入库单 ID）
+      
+      测试场景二：核对退回（03-plan.md 5.4 场景2）
+      
+      接口：POST /wms/RepairNotice/rejectCheck/{noticeId}
+      Body: { rejectReason: String }
+      
+      后端校验链：
+      1. ✓ status == "2" — 否则抛 ServiceException
+      2. ✓ handlerDeptId == 当前登录部门 — 否则抛 ServiceException
+      3. ✓ 状态变更为 status="1", handoverStatus="0"
+      4. ✓ 写入 rejectReason
+      
+      验收标准（对应 requirement.md 验收标准 8, 10）：
+      8. ✓ 退回原因非空前端校验 + 后端 @NotBlank 校验
+      10. ✓ status→1（待提交）, handoverStatus→0（未交接）
+      
+      测试场景三：按钮互斥与 Loading（03-plan.md 5.4 场景6）
+      1. 点击入库按钮时，退回按钮 disabled（confirmLoading=true）
+      2. 点击退回按钮时，入库按钮 disabled（rejectLoading=true）
+      3. 接口返回后按钮恢复正常
+      
+      需准备的数据：
+      - 一条 status="2" 的通知单（含多条明细，不同 skuName）
+      - 一个有效的仓库（wms_warehouse 表中存在记录）
+      - 当前登录用户的部门 = handler_dept_id
+      
+      输出测试报告到 .ai-dev/outputs/05-e2e-confirm-reject.md
+    reference_docs:
+      - "03-plan.md"
+      - "requirement.md"
+    retry_limit: 2
+    timeout_minutes: 30
+
+  - id: task-e2e-subpage-pagination
+    name: "端到端验证 — 子表分页与分组独立页码"
+    description: "验证单组明细超过200条时子表自动分页（每页50条）、不同分组独立页码互不影响"
+    category: test
+    estimated_turns: 30
+    priority: P1
+    depends_on:
+      - "task-e2e-start-process"
+    input_files:
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    output_files:
+      - ".ai-dev/outputs/06-e2e-subpage-pagination.md"
+    context_notes: |
+      验证子表分页与分组独立页码。
+      
+      分页逻辑（前端 RepairNoticeCheckDialog.vue）：
+      - pageItemThreshold = 200（硬编码，不配置化）
+      - pageItemSize = 50（每页50条）
+      - pageMap: Map<skuName, currentPage>（每个 skuName 分组维护独立页码）
+      - paginatedItems(group) 根据当前页码做数组切片
+      
+      测试准备：
+      1. 准备一条通知单，其中一组 skuName="规格A" 有 220 条明细
+      2. 另一组 skuName="规格B" 有 5 条明细
+      
+      测试步骤（手动）：
+      1. 打开核对明细弹窗，展开"规格A"分组
+         - 验证子表下方显示分页组件（el-pagination, small）
+         - 分页显示：总数 220，当前第 1 页，每页 50 条
+         - 子表内容为 1-50 条
+      2. 点击第 2 页
+         - 子表内容变为 51-100 条
+      3. 切换到"规格B"分组展开
+         - 该分组无分页组件（5条 < 200 阈值）
+         - 显示全部 5 条
+      4. 回到"规格A"分组展开
+         - 页码应保持在第2页（独立维护）
+      5. 关闭弹窗重新打开
+         - 所有页码重置为第1页（watch open → pageMap = new Map()）
+      
+      验收标准（requirement.md 验收标准 5, 6）：
+      5. ✓ 单组 >200 条时子表显示分页，每页50条
+      6. ✓ 不同分组独立分页，切换互不影响
+      
+      输出测试报告到 .ai-dev/outputs/06-e2e-subpage-pagination.md
+    reference_docs:
+      - "03-plan.md"
+      - "requirement.md"
+    retry_limit: 2
+    timeout_minutes: 20
+
+  - id: task-e2e-edge-cases
+    name: "端到端验证 — 边界场景测试"
+    description: "验证空明细、权限拒绝、重复提交防御、字典数据显示等边界场景"
+    category: test
+    estimated_turns: 35
+    priority: P1
+    depends_on:
+      - "task-e2e-start-process"
+    input_files:
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+      - "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
+      - "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    output_files:
+      - ".ai-dev/outputs/07-e2e-edge-cases.md"
+    context_notes: |
+      验证边界场景。
+      
+      测试用例列表：
+      
+      1. 权限拒绝场景（对应 03-plan.md 2.4 错误码对照表）：
+         a. 使用非处理机构用户调用 startProcess → 抛出"只有处理机构所属部门才能开始处理该单据"
+         b. 使用非处理机构用户调用 confirmCheck → 抛出"只有处理机构所属部门才能核对该单据"
+         c. 使用非处理机构用户调用 rejectCheck → 抛出"只有处理机构所属部门才能退回该单据"
+         d. 通知单不存在 → 抛出"返修通知单不存在"
+      
+      2. 状态校验场景：
+         a. status="0" 的通知单调用 startProcess → "只有已提交状态的单据才能开始处理"
+         b. status="0" 的通知单调用 confirmCheck → "只有已提交状态的单据才能核对通过"
+         c. status="2" 但 handlerDeptId 不是当前机构 → 权限拒绝
+      
+      3. 字典数据显示（fix 后验证）：
+         a. 前端表格中 status 列应正确显示"已提交"、"处理中"等字典标签
+         b. handoverStatus 列应正确显示"未交接"、"已入库"等字典标签
+         c. 确认字典 key 修复后数据加载正常
+      
+      4. 重复提交防御：
+         a. Controller 层面有 @RepeatSubmit() 注解（基于 Redis）
+         b. 前端 confirmLoading/rejectLoading 互斥
+         c. 快速点击按钮时，只有第一次请求生效
+         d. 验证 @RepeatSubmit 是否确实生效（Redis 防重）
+      
+      5. 空数据场景（优化#3 验证）：
+         a. 没有明细的通知单点击开始处理
+         b. groupedDetails 为空时显示 el-empty 或文字提示
+         c. groupedDetails 为空时点击入库 → details 为空数组，前端应阻止提交
+      
+      6. 前端校验场景：
+         a. 仓库选择器未选仓库 → 表单校验提示"请选择入库仓库"
+         b. 退回原因为空 → ElMessageBox prompt 的非空校验拦截
+         c. 修改实际数量为负数 → el-input-number :min="0" 阻止
+      
+      输出测试报告到 .ai-dev/outputs/07-e2e-edge-cases.md
+    reference_docs:
+      - "03-plan.md"
+      - "02-analysis.md"
+    retry_limit: 2
+    timeout_minutes: 25
