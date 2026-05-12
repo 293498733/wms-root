@@ -49,3 +49,13 @@
 10:25:00 [WARNING] [goose] Parameters used to load this recipe:
 10:27:34 [INFO ] Task task-e2e-confirm-reject committed: db382a38
 10:27:35 [WARNING] Working tree is dirty, creating auto-stash
+10:27:35 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+10:27:35 [WARNING] [goose] Loading recipe: Task - 端到端验证 — 子表分页与分组独立页码
+10:27:35 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:27:35 [WARNING] [goose] Parameters used to load this recipe:
+10:28:29 [INFO ] Task task-e2e-subpage-pagination committed: 9bc26614
+10:28:30 [WARNING] Working tree is dirty, creating auto-stash
+10:28:30 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+10:28:30 [WARNING] [goose] Loading recipe: Task - 端到端验证 — 边界场景测试
+10:28:30 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:28:30 [WARNING] [goose] Parameters used to load this recipe:
