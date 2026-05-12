@@ -254,7 +254,10 @@ public class RepairNoticeService {
     private final com.ruoyi.wms.mapper.ReturnNoticeMapper returnNoticeMapper;
     private final com.ruoyi.wms.mapper.ReturnNoticeDetailMapper returnNoticeDetailMapper;
 
-    public RepairNoticeVo queryById(Long id) {
-        RepairNoticeVo vo = repairNoticeMapper.selectVoById(id);
-        
+    /**
+     * 核对明细最大数量限制，防止全量加载导致 OOM
+     */
+    private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
+
+    public R
 ```
