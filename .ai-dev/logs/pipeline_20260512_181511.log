@@ -49,3 +49,15 @@
 18:42:30 [INFO ] Task task-db-return-notice-dict-menu committed: 7a114529
 18:42:30 [INFO ] Snapshot built: 1097 files indexed
 18:42:30 [WARNING] Working tree is dirty, creating auto-stash
+18:42:30 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:42:30 [WARNING] [goose] Loading recipe: Task - 开发返回确认单前端 API 封装层
+18:42:30 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+18:42:30 [WARNING] [goose] Parameters used to load this recipe:
+18:42:56 [INFO ] Task task-frontend-return-notice-api committed: 093fbbdc
+18:42:56 [INFO ] Snapshot built: 1098 files indexed
+18:42:56 [INFO ] Knowledge accumulated: 6 decisions from task task-frontend-return-notice-api
+18:42:57 [WARNING] Working tree is dirty, creating auto-stash
+18:42:57 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:42:57 [WARNING] [goose] Loading recipe: Task - 编写物流单建表 SQL 迁移脚本
+18:42:57 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+18:42:57 [WARNING] [goose] Parameters used to load this recipe:

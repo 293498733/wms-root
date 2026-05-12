@@ -37,8 +37,8 @@
     "notes": null
   },
   "task-db-logistics-order-tables": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:42:57.273407",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
@@ -107,12 +107,14 @@
     "notes": null
   },
   "task-frontend-return-notice-api": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T18:42:30.701615",
-    "completed_at": null,
+    "completed_at": "2026-05-12T18:42:56.765164",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "093fbbdc",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/api/wms/returnNotice.js"
+    ],
     "error_message": null,
     "notes": null
   },
