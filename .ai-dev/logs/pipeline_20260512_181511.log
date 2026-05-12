@@ -42,3 +42,10 @@
 18:41:18 [INFO ] Task task-db-return-notice-tables committed: 8db10722
 18:41:18 [INFO ] Snapshot built: 1095 files indexed
 18:41:19 [WARNING] Working tree is dirty, creating auto-stash
+18:41:19 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+18:41:19 [WARNING] [goose] Loading recipe: Task - 编写返回确认单字典和菜单 SQL 脚本
+18:41:19 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+18:41:19 [WARNING] [goose] Parameters used to load this recipe:
+18:42:30 [INFO ] Task task-db-return-notice-dict-menu committed: 7a114529
+18:42:30 [INFO ] Snapshot built: 1097 files indexed
+18:42:30 [WARNING] Working tree is dirty, creating auto-stash
