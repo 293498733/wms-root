@@ -1,121 +1,47 @@
 {
-  "task-fix-confirmcheck-quantity": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:16:58.701769",
-    "completed_at": "2026-05-12T15:18:14.394653",
+  "task-check-dialog-text": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
     "retries": 0,
-    "commit_hash": "5b1e311c",
-    "output_files_produced": [
-      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-fix-receipt-quantity-validation": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:16:04.392346",
-    "completed_at": "2026-05-12T15:16:58.312615",
-    "retries": 0,
-    "commit_hash": "16f38f71",
-    "output_files_produced": [
-      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-add-repair-notice-menu-sql": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:19:56.086548",
-    "completed_at": "2026-05-12T15:23:29.643844",
-    "retries": 0,
-    "commit_hash": "f2a9803c",
-    "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_repair_notice_menu.sql"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-grouped-check-validation": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:29:10.826306",
-    "completed_at": "2026-05-12T15:31:09.773007",
-    "retries": 0,
-    "commit_hash": "ad21ae8a",
-    "output_files_produced": [
-      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-frontend-mismatch-detail-highlight": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:18:14.805425",
-    "completed_at": "2026-05-12T15:19:55.711531",
-    "retries": 0,
-    "commit_hash": "278c914e",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-frontend-page-threshold-configurable": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:23:30.008110",
-    "completed_at": "2026-05-12T15:24:22.290778",
-    "retries": 0,
-    "commit_hash": "1b602bbb",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-frontend-empty-state-improve": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:24:22.665641",
-    "completed_at": "2026-05-12T15:25:41.464468",
-    "retries": 0,
-    "commit_hash": "c1e88cb9",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-compile-test": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:31:10.149027",
-    "completed_at": "2026-05-12T15:32:57.785309",
-    "retries": 0,
-    "commit_hash": "a1df8619",
+    "commit_hash": null,
     "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
-  "task-frontend-lint-test": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:25:41.860750",
-    "completed_at": "2026-05-12T15:29:10.272106",
+  "task-index-column": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
     "retries": 0,
-    "commit_hash": "ad1fe23c",
+    "commit_hash": null,
     "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
-  "task-integration-test": {
-    "status": "completed",
-    "started_at": "2026-05-12T15:32:58.181777",
-    "completed_at": "2026-05-12T15:35:08.485597",
+  "task-pagination-params": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
     "retries": 0,
-    "commit_hash": "95f10539",
+    "commit_hash": null,
     "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
-  "task-review-all-changes": {
+  "task-backend-test": {
     "status": "in_progress",
-    "started_at": "2026-05-12T15:35:08.891489",
+    "started_at": "2026-05-12T16:09:15.625957",
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-verify": {
+    "status": "pending",
+    "started_at": null,
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
