@@ -40,3 +40,9 @@
 15:16:58 [WARNING] [goose] Parameters used to load this recipe:
 15:18:14 [INFO ] Task task-fix-confirmcheck-quantity committed: 5b1e311c
 15:18:14 [WARNING] Working tree is dirty, creating auto-stash
+15:18:14 [INFO ] task: goose run --recipe task-template.yaml --max-turns 25
+15:18:14 [WARNING] [goose] Loading recipe: Task - 前端分组表格不匹配行高亮显示
+15:18:14 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+15:18:14 [WARNING] [goose] Parameters used to load this recipe:
+15:19:55 [INFO ] Task task-frontend-mismatch-detail-highlight committed: 278c914e
+15:19:55 [WARNING] Working tree is dirty, creating auto-stash
