@@ -1,0 +1,23 @@
+14:57:47 [INFO ] 项目: D:\MyPrj\进销存
+14:57:47 [INFO ] 项目画像不存在，将从 Phase 0 项目初始化开始
+14:57:47 [INFO ] 从指定阶段开始: 项目初始化
+14:57:47 [INFO ] goose run --recipe 00-init-project.yaml --max-turns 60
+14:57:47 [WARNING] [goose] Loading recipe: 阶段 0 - 项目初始化
+14:57:47 [WARNING] [goose] Description: 扫描目标项目，自动生成项目画像和架构地图
+14:57:47 [WARNING] [goose] Parameters used to load this recipe:
+15:01:52 [INFO ] 项目初始化 — 完成 (4m4s)
+15:01:52 [INFO ] goose run --recipe 01-refine-requirement.yaml --max-turns 80
+15:01:52 [WARNING] [goose] Loading recipe: 阶段 1 - 需求精炼
+15:01:52 [WARNING] [goose] Description: 将用户的原始需求转化为结构化的、AI 可直接执行的需求文档
+15:01:52 [WARNING] [goose] Parameters used to load this recipe:
+15:02:28 [WARNING] 未生成预期文件: D:\MyPrj\进销存\.ai-dev\requirement.md
+15:02:28 [ERROR] 缺少预期文件: ['requirement.md']
+15:02:28 [INFO ] goose run --recipe 02-analysis.yaml --max-turns 100
+15:02:28 [WARNING] [goose] Loading recipe: 阶段 2 - 需求分析
+15:02:28 [WARNING] [goose] Description: 拆解功能点、数据流、界面逻辑，列出所有不确定项
+15:02:28 [WARNING] [goose] Parameters used to load this recipe:
+15:08:12 [INFO ] 需求分析 — 完成 (5m43s)
+15:08:12 [INFO ] goose run --recipe 03-design.yaml --max-turns 120
+15:08:12 [WARNING] [goose] Loading recipe: 阶段 3 - 工程方案
+15:08:12 [WARNING] [goose] Description: 基于已确认的需求和需求分析，做架构设计、接口定义、数据模型
+15:08:12 [WARNING] [goose] Parameters used to load this recipe:
