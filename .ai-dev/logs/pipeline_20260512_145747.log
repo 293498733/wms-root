@@ -46,3 +46,9 @@
 15:18:14 [WARNING] [goose] Parameters used to load this recipe:
 15:19:55 [INFO ] Task task-frontend-mismatch-detail-highlight committed: 278c914e
 15:19:55 [WARNING] Working tree is dirty, creating auto-stash
+15:19:56 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+15:19:56 [WARNING] [goose] Loading recipe: Task - 新增返修通知单菜单和权限按钮的 SQL 迁移脚本
+15:19:56 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+15:19:56 [WARNING] [goose] Parameters used to load this recipe:
+15:23:29 [INFO ] Task task-add-repair-notice-menu-sql committed: f2a9803c
+15:23:29 [WARNING] Working tree is dirty, creating auto-stash
