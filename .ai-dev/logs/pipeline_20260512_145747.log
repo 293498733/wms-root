@@ -70,3 +70,9 @@
 15:25:41 [WARNING] [goose] Parameters used to load this recipe:
 15:29:10 [INFO ] Task task-frontend-lint-test committed: ad1fe23c
 15:29:10 [WARNING] Working tree is dirty, creating auto-stash
+15:29:10 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35
+15:29:10 [WARNING] [goose] Loading recipe: Task - 后端增加分组数量一致性校验（confirmCheck 增强）
+15:29:10 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+15:29:10 [WARNING] [goose] Parameters used to load this recipe:
+15:31:09 [INFO ] Task task-backend-grouped-check-validation committed: ad21ae8a
+15:31:09 [WARNING] Working tree is dirty, creating auto-stash
