@@ -1,0 +1,20 @@
+At line:1 char:290
++ ... NoticeService.java' | Measure-Object -Line).Lines -NoNewline) ; power ...
++                                                                 ~
+Unexpected token ')' in expression or statement.
+At line:1 char:620
++ ... or($i=$startIndex; $i -lt $endIndex; $i++){ Write-Output "$i: $($line ...
++                                                               ~~~
+Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit
+ the name.
+At line:1 char:619
++ ... i -lt $endIndex; $i++){ Write-Output "$i: $($lines[$i].TrimEnd())`" }
++                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The string is missing the terminator: ".
+At line:1 char:604
++ ...  $lines.Length); for($i=$startIndex; $i -lt $endIndex; $i++){ Write-O ...
++                                                                 ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

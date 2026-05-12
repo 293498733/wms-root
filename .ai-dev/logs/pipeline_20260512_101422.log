@@ -25,3 +25,9 @@
 10:17:31 [WARNING] [goose] Parameters used to load this recipe:
 10:17:57 [INFO ] Task task-frontend-empty-state committed: 59854404
 10:17:57 [WARNING] Working tree is dirty, creating auto-stash
+10:17:57 [INFO ] task: goose run --recipe task-template.yaml --max-turns 30
+10:17:57 [WARNING] [goose] Loading recipe: Task - 后端增加核对明细最大数量限制
+10:17:57 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:17:57 [WARNING] [goose] Parameters used to load this recipe:
+10:18:41 [INFO ] Task task-backend-detail-limit committed: a78b1cce
+10:18:42 [WARNING] Working tree is dirty, creating auto-stash

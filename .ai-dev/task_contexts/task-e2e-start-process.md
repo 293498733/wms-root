@@ -135,7 +135,11 @@
         </el-form-item>
       </el-form>
 
+      <!-- 空状态提示：无可核对的物品明细 -->
+      <el-empty v-if="groupedDetails.length === 0" description="该通知单无可核对的物品明细" />
+      
       <!-- 按规格型号分组的汇总表格 -->
+      <template v-else>
       <el-table :data="groupedDetails" border size="small" row-key="skuName">
         <el-table-column type="expand" width="50">
           <template #default="{ row }">
@@ -170,10 +174,7 @@
                 </el-table-column>
               </el-table>
               <!-- 分页：子表明细超过 200 条时启用 -->
-              <div v-if="row.items" class="detail-pagination">
-                <el-pagination
-                  :current-page="getPageNum(row.skuName)"
-                  
+              <div v-if="r
 ```
 
 #### ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js
@@ -361,7 +362,7 @@ const { proxy } = getCurrentInstance();
 const {
   wms_repair_notice_status,
   wms_repair_handover_status
-} = proxy.useDict("wms_repair_notice_status", "wms_repair_handover_status");
+} = proxy.useDict("repair_notice_status", "handover_status");
 
 const {
   open,
@@ -577,9 +578,12 @@ public class RepairNoticeService {
     private final com.ruoyi.wms.mapper.ReturnNoticeMapper returnNoticeMapper;
     private final com.ruoyi.wms.mapper.ReturnNoticeDetailMapper returnNoticeDetailMapper;
 
-    public RepairNoticeVo queryById(Long id) {
-        RepairNoticeVo vo = repairNoticeMapper.selectVoById(id);
-        
+    /**
+     * 核对明细最大数量限制，防止全量加载导致 OOM
+     */
+    private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
+
+    public R
 ```
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java
