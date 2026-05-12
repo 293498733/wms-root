@@ -49,18 +49,21 @@
     "notes": null
   },
   "task-db-logistics-order-dict-menu": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T18:43:43.022240",
-    "completed_at": null,
+    "completed_at": "2026-05-12T18:44:37.121459",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "39dd8e18",
+    "output_files_produced": [
+      "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_dict.sql",
+      "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_menu.sql"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-backend-logistics-utils": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:44:37.642375",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
