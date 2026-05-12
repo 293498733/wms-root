@@ -45,3 +45,9 @@
 16:11:28 [WARNING] [goose] Parameters used to load this recipe:
 16:16:52 [INFO ] Task task-index-column committed: 00f9a08c
 16:16:53 [WARNING] Working tree is dirty, creating auto-stash
+16:16:53 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+16:16:53 [WARNING] [goose] Loading recipe: Task - 子表分页阈值参数调整
+16:16:53 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+16:16:53 [WARNING] [goose] Parameters used to load this recipe:
+16:17:32 [INFO ] Task task-pagination-params committed: 4a7fd186
+16:17:32 [WARNING] Working tree is dirty, creating auto-stash
