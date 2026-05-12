@@ -12,18 +12,20 @@
     "notes": null
   },
   "task-index-column": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T16:11:28.763716",
-    "completed_at": null,
+    "completed_at": "2026-05-12T16:16:52.904068",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "00f9a08c",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-pagination-params": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T16:16:53.303308",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
