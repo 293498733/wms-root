@@ -74,8 +74,8 @@
     "notes": null
   },
   "task-backend-logistics-entities": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:48:41.266464",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
@@ -126,12 +126,14 @@
     "notes": null
   },
   "task-frontend-return-notice-use-js": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T18:45:09.384035",
-    "completed_at": null,
+    "completed_at": "2026-05-12T18:48:40.703471",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "56b72bd0",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/useReturnNotice.js"
+    ],
     "error_message": null,
     "notes": null
   },
