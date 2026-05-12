@@ -104,18 +104,18 @@
     "notes": null
   },
   "task-integration-test": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T15:32:58.181777",
-    "completed_at": null,
+    "completed_at": "2026-05-12T15:35:08.485597",
     "retries": 0,
-    "commit_hash": null,
+    "commit_hash": "95f10539",
     "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
   "task-review-all-changes": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T15:35:08.891489",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,

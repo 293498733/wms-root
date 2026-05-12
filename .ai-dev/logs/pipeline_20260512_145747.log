@@ -82,3 +82,9 @@
 15:31:10 [WARNING] [goose] Parameters used to load this recipe:
 15:32:57 [INFO ] Task task-backend-compile-test committed: a1df8619
 15:32:57 [WARNING] Working tree is dirty, creating auto-stash
+15:32:58 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40
+15:32:58 [WARNING] [goose] Loading recipe: Task - 全流程集成测试（手动测试用例执行）
+15:32:58 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+15:32:58 [WARNING] [goose] Parameters used to load this recipe:
+15:35:08 [INFO ] Task task-integration-test committed: 95f10539
+15:35:08 [WARNING] Working tree is dirty, creating auto-stash

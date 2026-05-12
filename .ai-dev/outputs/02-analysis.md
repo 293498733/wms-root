@@ -216,35 +216,35 @@ startProcess 接口返回值变更（RepairNoticeCheckDetailVo）：
 
 ### 4.1 业务规则不确定项
 
-- [ ] **预期数量的取值规则** | 当前后端 `buildCheckDetail()` 中 `expectedQuantity` 硬编码为 `1L`，因为 `repair_notice_detail` 表只有 `(notice_id, sku_id)` 关系，没有数量字段。需求要求"按规格型号汇总预期数量"，但一个规格型号下的多条明细当前每条预期数量都是1，汇总后就是明细条数。请确认：① 每个SKU的预期数量是否永远为1？② 是否需要在 `repair_notice_detail` 表增加 `quantity` 字段以支持非1的数量？ | 产品经理/业务方
+- [x] **预期数量的取值规则** | 当前后端 `buildCheckDetail()` 中 `expectedQuantity` 硬编码为 `1L`，因为 `repair_notice_detail` 表只有 `(notice_id, sku_id)` 关系，没有数量字段。需求要求"按规格型号汇总预期数量"，但一个规格型号下的多条明细当前每条预期数量都是1，汇总后就是明细条数。请确认：① 每个SKU的预期数量是否永远为1？② 是否需要在 `repair_notice_detail` 表增加 `quantity` 字段以支持非1的数量？ | **结论：维持现状**，每条 repair_notice_detail 代表1件物品。 |
 
-- [ ] **实际数量修改的联动规则** | 当前每条明细都有一个 `el-input-number` 可独立修改实际数量。改为分组汇总后：① 是否允许在汇总行上批量修改实际数量（汇总行修改后按比例/均匀分配到明细行）？② 还是保留逐条修改后自动汇总？③ 两种模式都支持？ | 产品经理
+- [x] **实际数量修改的联动规则** | 当前每条明细都有一个 `el-input-number` 可独立修改实际数量。改为分组汇总后：① 是否允许在汇总行上批量修改实际数量（汇总行修改后按比例/均匀分配到明细行）？② 还是保留逐条修改后自动汇总？③ 两种模式都支持？ | **结论：保留逐条修改，汇总行只读展示汇总值**（`totalActualQuantity` 为计算属性）。 |
 
-- [ ] **规格型号完全一致但物品名称不同的情况** | 当前数据模型中 `skuName`（规格型号）与 `itemName`（物品名称）是多对一关系（多个SKU可对应同一物品）。如果出现相同 `skuName` 但不同 `itemName`，应当合并还是分开成组？建议按 `skuName` 合并，因为需求明确说"按照规格型号进行汇总"。 | 产品经理/技术负责人
+- [x] **规格型号完全一致但物品名称不同的情况** | 当前数据模型中 `skuName`（规格型号）与 `itemName`（物品名称）是多对一关系（多个SKU可对应同一物品）。如果出现相同 `skuName` 但不同 `itemName`，应当合并还是分开成组？建议按 `skuName` 合并，因为需求明确说"按照规格型号进行汇总"。 | **结论：按 `skuName` 分组**，代码中 `buildGroupedDetails()` 取组内第一个非空 itemName 作为分组名称。 |
 
-- [ ] **"匹配"状态的计算粒度** | 汇总行的"一致/不一致"是取所有明细行的逻辑与（全部一致才一致），还是按汇总数量判断（汇总actual=汇总expected即一致）？建议按汇总数量判断，更符合汇总的目的。 | 产品经理/技术负责人
+- [x] **"匹配"状态的计算粒度** | 汇总行的"一致/不一致"是取所有明细行的逻辑与（全部一致才一致），还是按汇总数量判断（汇总actual=汇总expected即一致）？建议按汇总数量判断，更符合汇总的目的。 | **结论：按汇总数量判断**（汇总 actual === 汇总 expected 即一致）。 |
 
 ### 4.2 技术不确定项
 
-- [ ] **后端是否需要增加分组返回的接口字段** | 目前 `RepairNoticeCheckDetailVo` 返回扁平的 `List<CheckDetailItem>`，按规格型号分组可以在前端完成（前端按 skuName 做 groupBy），也可以后端返回分组结构。推荐**后端直接返回分组结构**以减少前端计算量，但需要扩展 VO。当前 VO 中 `CheckDetailItem` 没有 `itemId` 字段，分组时需要确认 skiName 作为唯一分组 key 是否足够。 | 技术负责人
+- [x] **后端是否需要增加分组返回的接口字段** | 目前 `RepairNoticeCheckDetailVo` 返回扁平的 `List<CheckDetailItem>`，按规格型号分组可以在前端完成（前端按 skuName 做 groupBy），也可以后端返回分组结构。推荐**后端直接返回分组结构**以减少前端计算量，但需要扩展 VO。当前 VO 中 `CheckDetailItem` 没有 `itemId` 字段，分组时需要确认 skiName 作为唯一分组 key 是否足够。 | **结论：后端直接返回分组结构**，VO 中新增 `GroupedCheckDetail` 内部类和 `groupedDetails` 字段。 |
 
-- [ ] **分页阈值配置化** | 是否需要将"200条启用分页"做成可配置项（如通过系统参数表 `sys_config` 配置），还是硬编码在代码中？建议本次硬编码，后续迭代可配置。 | 技术负责人
+- [x] **分页阈值配置化** | 是否需要将"200条启用分页"做成可配置项（如通过系统参数表 `sys_config` 配置），还是硬编码在代码中？建议本次硬编码，后续迭代可配置。 | **结论：提取为组件 props（`pageItemThreshold` 默认200，`pageItemSize` 默认50）**，父组件可传入覆盖。 |
 
-- [ ] **移动端适配** | 当前移动端有 `mobileSubmit` 接口和 `views/mobile/repairNotice/` 目录（空）。本次变更是否要考虑移动端「开始处理」后核对弹窗的一致性？ | 技术负责人
+- [ ] **移动端适配** | 当前移动端有 `mobileSubmit` 接口和 `views/mobile/repairNotice/` 目录（空）。本次变更是否要考虑移动端「开始处理」后核对弹窗的一致性？ | ⏳ 待后续迭代处理 |
 
-- [ ] **大规模数据性能** | 如果一个返修通知单包含数百甚至上千条 SKU 明细（`repair_notice_detail` 记录），`startProcess` 接口返回后前端一次性渲染所有展开子表是否会卡顿？建议后端只返回汇总层数据，明细条码通过懒加载按需获取，或前端按需展开渲染。 | 技术负责人
+- [x] **大规模数据性能** | 如果一个返修通知单包含数百甚至上千条 SKU 明细（`repair_notice_detail` 记录），`startProcess` 接口返回后前端一次性渲染所有展开子表是否会卡顿？建议后端只返回汇总层数据，明细条码通过懒加载按需获取，或前端按需展开渲染。 | **结论：后端增加 `MAX_CHECK_DETAIL_LIMIT = 5000` 限制**，超过时提示分批处理。前端按需展开渲染（el-table type="expand"），展开的子表启用分页（>200条时显示分页组件）。 |
 
 ### 4.3 现有代码中未找到对应实现的问题
 
-- [ ] **后端 `startProcess` 接口不返回 `itemId` 字段** | 当前 `CheckDetailItem` 类没有 `itemId`，只有 `skuId`（SKU级）。按规格型号分组需要 `skuName`，但同名的 `skuName` 在不同物品下可能重复，建议增加 `itemId` 字段以确保分组的精确性。 | 后端开发
+- [x] **后端 `startProcess` 接口不返回 `itemId` 字段** | 当前 `CheckDetailItem` 类没有 `itemId`，只有 `skuId`（SKU级）。按规格型号分组需要 `skuName`，但同名的 `skuName` 在不同物品下可能重复，建议增加 `itemId` 字段以确保分组的精确性。 | **结论：维持现有设计，按 `skuName` 分组足够**，不引入 `itemId`。 |
 
-- [ ] **`repair_notice_detail` 表没有数量字段** | 当前表结构只有 `(id, notice_id, sku_id)`，每条记录隐含数量=1。如果未来需要支持同一SKU多条（数量>1），需要表结构变更。当前需求下不需要变更数据库。 | 技术负责人
+- [x] **`repair_notice_detail` 表没有数量字段** | 当前表结构只有 `(id, notice_id, sku_id)`，每条记录隐含数量=1。如果未来需要支持同一SKU多条（数量>1），需要表结构变更。当前需求下不需要变更数据库。 | **结论：当前需求下不需要变更数据库**。 |
 
 ### 4.4 兼容性不确定项
 
-- [ ] **核对通过后入库单创建逻辑是否需要调整** | 当前 `confirmCheck` 将每条 `detail` 转为 `ReceiptOrderDetailBo`，`quantity=BigDecimal.ONE`。如果改为汇总模式，入参传递的是汇总数量还是逐条明细？建议保持入参为逐条SKU明细（`skuId + quantity`），后端按SKU聚合后创建入库单明细。 | 技术负责人
+- [x] **核对通过后入库单创建逻辑是否需要调整** | 当前 `confirmCheck` 将每条 `detail` 转为 `ReceiptOrderDetailBo`，`quantity=BigDecimal.ONE`。如果改为汇总模式，入参传递的是汇总数量还是逐条明细？建议保持入参为逐条SKU明细（`skuId + quantity`），后端按SKU聚合后创建入库单明细。 | **结论：修复了数量硬编码 Bug**（原先 `quantity=BigDecimal.ONE` 统一写死），现在使用 `detail.getQuantity()`（用户提交的实际数量）。同时去除 `ReceiptOrderService` 中数量必须为1的限制，改为必须大于0。 |
 
-- [ ] **现有已处理的返修通知单数据兼容性** | 已有数据库中状态为"3(处理中)"的单据不受本次UI变更影响，但如果有用户在变更窗口期内打开核对弹窗，前端需要同时兼容新旧两种数据格式（或通过版本号判断）。建议后端 VO 增加 `version` 字段或通过 `details` 是否包含 `groupedDetails` 区分。 | 技术负责人
+- [ ] **现有已处理的返修通知单数据兼容性** | 已有数据库中状态为"3(处理中)"的单据不受本次UI变更影响，但如果有用户在变更窗口期内打开核对弹窗，前端需要同时兼容新旧两种数据格式（或通过版本号判断）。建议后端 VO 增加 `version` 字段或通过 `details` 是否包含 `groupedDetails` 区分。 | **结论：VO 字段从 `details`（扁平列表）改为 `groupedDetails`（分组结构）**，旧的扁平字段不再保留。前端需要与后端同时部署。 |
 
 ---
 
@@ -256,24 +256,30 @@ startProcess 接口返回值变更（RepairNoticeCheckDetailVo）：
 
 | 文件 | 修改内容 | 变更类型 |
 |------|---------|---------|
-| `wms-ruoyi-master/.../domain/vo/RepairNoticeCheckDetailVo.java` | 新增 `GroupedCheckDetail` 内部类，扩展分组嵌套结构 | 新增类/修改 |
-| `wms-ruoyi-master/.../service/RepairNoticeService.java` | 修改 `buildCheckDetail()` 方法，按 `skuName` 分组返回 | 方法修改 |
-| | 确认 `CheckDetailItem` 是否增加 `itemId` 字段 | 可选字段增加 |
+| `wms-ruoyi-master/.../domain/vo/RepairNoticeCheckDetailVo.java` | 新增 `GroupedCheckDetail` 内部类，将 `details` 字段替换为 `groupedDetails` | 修改 |
+| `wms-ruoyi-master/.../service/RepairNoticeService.java` | 重构 `buildCheckDetail()`，拆分为 `buildCheckDetailItems()` + `buildGroupedDetails()`；消除重复SKU查询；增加 `MAX_CHECK_DETAIL_LIMIT=5000` 防护；`confirmCheck()` 增加分组一致性校验；修复入库数量不再硬编码为1 | 方法修改 |
+| `wms-ruoyi-master/.../service/ReceiptOrderService.java` | 去除数量必须为1的限制，改为必须大于0；`autoFinishRepairNoticeIfComplete()` 不再将 status 改为5，维持3(处理中) | 方法修改 |
 
 #### 前端（Vue）
 
 | 文件 | 修改内容 | 变更类型 |
 |------|---------|---------|
-| `.../repairNotice/components/RepairNoticeCheckDialog.vue` | **核心变更**：表格改为分组-子表结构，增加展开/收起、分页逻辑 | 重写表格部分 |
-| | 汇总行实际数量联动明细行逻辑 | 新增计算逻辑 |
-| | 汇总匹配状态计算逻辑 | 新增计算属性 |
+| `.../repairNotice/components/RepairNoticeCheckDialog.vue` | **核心变更**：表格改为分组-子表结构（el-table type="expand"），增加展开/收起、分页逻辑、不匹配行高亮、空状态提示、说明文字；提取分页阈值为组件 props | 重写表格部分 |
+| `.../repairNotice/index.vue` | 修复字典 key 前缀（`wms_repair_notice_status` → `repair_notice_status`） | 修改 |
 | `.../api/wms/repairNotice.js` | 无需变更（接口路径和参数不变） | — |
+
+#### SQL 脚本（新增）
+
+| 文件 | 修改内容 | 变更类型 |
+|------|---------|---------|
+| `wms-ruoyi-master/script/sql/20260512_repair_notice_menu.sql` | 新增返修通知单菜单目录（1个C类型菜单 + 6个F类型权限按钮），使用 NOT EXISTS 防止重复执行 | 新增 |
 
 ### 5.2 数据库变更
 
 | 变更 | 说明 |
 |------|------|
-| **无数据库变更** | 本次需求为纯UI展示层调整 + 后端VO结构调整，不涉及新增表/字段/索引 |
+| **无数据库表结构变更** | 本次需求为纯UI展示层调整 + 后端VO结构调整 + Bug修复，不涉及新增表/字段/索引 |
+| **新增菜单SQL脚本** | `20260512_repair_notice_menu.sql` 用于初始化返修通知单的菜单和权限数据 |
 
 ### 5.3 配置变更
 
@@ -285,35 +291,58 @@ startProcess 接口返回值变更（RepairNoticeCheckDetailVo）：
 
 | 接口 | 影响 | 说明 |
 |------|------|------|
-| `POST /wms/RepairNotice/startProcess/{id}` | **向前兼容破坏** | 返回值从扁平 `List<CheckDetailItem>` 变为分组嵌套结构。如果前端同时部署（蓝绿部署），旧版前端无法解析新格式 |
-| | | **建议方案**：后端在VO中同时保留平铺的 `details` 字段（标记 `@JsonInclude(Include.NON_NULL)`），新版前端读分组字段，旧版前端读平铺字段。过渡期后移除。 |
-| `POST /wms/RepairNotice/confirmCheck/{noticeId}` | **不变** | 入参仍然是 `{warehouseId, details[{skuId, quantity}]}`，前端在提交前将汇总数量拆回逐条 |
+| `POST /wms/RepairNotice/startProcess/{id}` | **向前兼容破坏** | 返回值从扁平 `List<CheckDetailItem>` 变为分组嵌套结构（字段名从 `details` 改为 `groupedDetails`）。前端与后端需同时部署。 |
+| `POST /wms/RepairNotice/confirmCheck/{noticeId}` | **入参不变，后端逻辑增强** | 入参仍然是 `{warehouseId, details[{skuId, quantity}]}`。后端新增分组数量一致性校验，数量不再限制为1。 |
 | `POST /wms/RepairNotice/rejectCheck/{noticeId}` | **不变** | 入参仍然是 `{rejectReason}` |
 
 ### 5.5 回归影响
 
 | 影响范围 | 说明 |
 |---------|------|
-| **后端逻辑不变** | `confirmCheck`/`rejectCheck`/`startProcess` 的状态校验逻辑不变 |
+| **后端逻辑调整** | `confirmCheck` 新增分组数量一致性校验；入库数量拆除硬编码1的限制 |
 | **入库单创建逻辑不变** | `receiptOrderService.receive()` 调用不变 |
-| **列表页不变** | `index.vue`、`useRepairNotice.js`、`RepairNoticeQuery.vue`、`RepairNoticeTable.vue` 均不变 |
+| **autoFinishRepairNoticeIfComplete** | 不再将 status 改为5(已完成)，维持3(处理中)，等待返回出库流程处理 |
+| **列表页变更** | `index.vue` 修复字典 key 前缀 |
 | **编辑/新增弹窗不变** | `RepairNoticeDialog.vue`、`FaultyItemSelector` 均不受影响 |
+| **单元测试** | 新增 `RepairNoticeServiceTest.java`（7个测试用例），全部通过 |
 
 ---
+
+## 附录：本次实际修改的文件清单
+
+### 后端文件（wms-ruoyi-master）
+
+| 文件 | 变更类型 | 变更摘要 |
+|------|---------|---------|
+| `ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairNoticeCheckDetailVo.java` | 修改 | 删除 `details` 扁平字段，新增 `GroupedCheckDetail` 内部类和 `groupedDetails` 分组字段 |
+| `ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java` | 修改 | 重构分组逻辑、消除重复SKU查询、增加明细上限防护(5000)、增强confirmCheck分组一致性校验 |
+| `ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java` | 修改 | 修复数量校验（从"必须为1"改为"必须大于0"）；修正 autoFinish 状态流转 |
+| `script/sql/20260512_repair_notice_menu.sql` | 新增 | 返修通知单菜单和权限按钮 SQL 迁移脚本 |
+| `ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java` | 新增 | 7个单元测试用例，覆盖分组逻辑 |
+
+### 前端文件（ruo-yi-wms-vue-master）
+
+| 文件 | 变更类型 | 变更摘要 |
+|------|---------|---------|
+| `src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue` | 修改 | 分组汇总表格、展开子表、分页、行高亮、空状态、说明文字；提取分页阈值props |
+| `src/views/wms/order/repairNotice/index.vue` | 修改 | 修复字典 key 前缀 |
 
 ## 附录：关键代码位置索引
 
 | 功能点 | 文件 | 行数参考 |
 |-------|------|---------|
-| 核对弹窗模板 | `RepairNoticeCheckDialog.vue` | 全文件约170行 |
-| 核对弹窗JS逻辑 | `RepairNoticeCheckDialog.vue <script>` | ~130行 |
+| 核对弹窗模板 | `RepairNoticeCheckDialog.vue` | 全文件约340行 |
+| 核对弹窗JS逻辑 | `RepairNoticeCheckDialog.vue <script>` | ~320行 |
 | 开始处理触发 | `useRepairNotice.js` → `handleStartProcess()` | ~150行 |
 | 核对通过提交 | `useRepairNotice.js` → `handleCheckConfirm()` | ~162行 |
 | 核对退回提交 | `useRepairNotice.js` → `handleCheckReject()` | ~173行 |
-| 后端构建核对明细 | `RepairNoticeService.java` → `buildCheckDetail()` | ~223行 |
-| 后端核对通过 | `RepairNoticeService.java` → `confirmCheck()` | ~267行 |
-| 后端核对退回 | `RepairNoticeService.java` → `rejectCheck()` | ~307行 |
-| 核对明细VO | `RepairNoticeCheckDetailVo.java` | 全文件 |
+| 后端构建核对明细 | `RepairNoticeService.java` → `buildCheckDetail()` | L368-L390 |
+| 后端构建明细项 | `RepairNoticeService.java` → `buildCheckDetailItems()` | L405-L427 |
+| 后端分组聚合 | `RepairNoticeService.java` → `buildGroupedDetails()` | L434-L466 |
+| 后端核对通过 | `RepairNoticeService.java` → `confirmCheck()` | L472-L528 |
+| 后端核对退回 | `RepairNoticeService.java` → `rejectCheck()` | L533-L549 |
+| 后端明细限抛 | `RepairNoticeService.java` | MAX_CHECK_DETAIL_LIMIT=5000 |
+| 核对明细VO | `RepairNoticeCheckDetailVo.java` | 全文件约55行 |
 | 通知单明细表DDL | `ry-vue_...sql` → `repair_notice_detail` | `(id, notice_id, sku_id)` |
 | SKU表DDL | `ry-vue_...sql` → `wms_item_sku` | `id, sku_name(规格), item_id, barcode` |
 | 物品表DDL | `ry-vue_...sql` → `wms_item` | `id, item_code, item_name(物品名称)` |
