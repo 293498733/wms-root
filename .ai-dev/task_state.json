@@ -60,12 +60,14 @@
     "notes": null
   },
   "task-backend-unit-test": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T10:21:34.969646",
-    "completed_at": null,
+    "completed_at": "2026-05-12T10:25:00.246312",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "de1ece14",
+    "output_files_produced": [
+      "wms-ruoyi-master/ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java"
+    ],
     "error_message": null,
     "notes": null
   },
@@ -82,8 +84,8 @@
     "notes": null
   },
   "task-e2e-confirm-reject": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T10:25:00.662918",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
