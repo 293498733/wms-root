@@ -21,3 +21,16 @@
 15:08:12 [WARNING] [goose] Loading recipe: 阶段 3 - 工程方案
 15:08:12 [WARNING] [goose] Description: 基于已确认的需求和需求分析，做架构设计、接口定义、数据模型
 15:08:12 [WARNING] [goose] Parameters used to load this recipe:
+15:11:49 [INFO ] 工程方案 — 完成 (3m36s)
+15:11:49 [INFO ] goose run --recipe 03.5-decompose.yaml --max-turns 80
+15:11:49 [WARNING] [goose] Loading recipe: 阶段 3.5 - 任务拆分
+15:11:49 [WARNING] [goose] Description: 将工程方案拆分为原子化的独立执行任务，每个任务可独立在新 AI 会话中执行
+15:11:49 [WARNING] [goose] Parameters used to load this recipe:
+15:16:03 [INFO ] 任务拆分 — 完成 (4m14s)
+15:16:04 [WARNING] Working tree is dirty, creating auto-stash
+15:16:04 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20
+15:16:04 [WARNING] [goose] Loading recipe: Task - 修复入库单数量校验限制（去除必须为 1 的限制）
+15:16:04 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+15:16:04 [WARNING] [goose] Parameters used to load this recipe:
+15:16:58 [INFO ] Task task-fix-receipt-quantity-validation committed: 16f38f71
+15:16:58 [WARNING] Working tree is dirty, creating auto-stash
