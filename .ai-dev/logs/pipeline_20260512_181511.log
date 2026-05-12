@@ -1,0 +1,12 @@
+18:15:11 [INFO ] 项目: D:\MyPrj\进销存
+18:15:11 [INFO ] 项目画像不存在，将从 Phase 0 项目初始化开始
+18:15:11 [INFO ] 从 Phase 0 项目初始化开始（profile.yml 不存在）
+18:15:11 [INFO ] goose run --recipe 00-init-project.yaml --max-turns 60
+18:15:11 [WARNING] [goose] Loading recipe: 阶段 0 - 项目初始化
+18:15:11 [WARNING] [goose] Description: 扫描目标项目，自动生成项目画像和架构地图
+18:15:11 [WARNING] [goose] Parameters used to load this recipe:
+18:18:52 [INFO ] 项目初始化 — 完成 (3m41s)
+18:18:52 [INFO ] goose run --recipe 01-refine-requirement.yaml --max-turns 80
+18:18:52 [WARNING] [goose] Loading recipe: 阶段 1 - 需求精炼
+18:18:52 [WARNING] [goose] Description: 将用户的原始需求转化为结构化的、AI 可直接执行的需求文档
+18:18:52 [WARNING] [goose] Parameters used to load this recipe:

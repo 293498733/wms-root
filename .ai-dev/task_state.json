@@ -1,53 +1,159 @@
 {
-  "task-check-dialog-text": {
+  "task-fix-check-ref-bug": {
     "status": "completed",
-    "started_at": "2026-05-12T16:10:29.123809",
-    "completed_at": "2026-05-12T16:11:28.363176",
+    "started_at": "2026-05-12T18:40:06.557159",
+    "completed_at": "2026-05-12T18:40:10.277320",
     "retries": 0,
-    "commit_hash": "423a7e93",
+    "commit_hash": "",
     "output_files_produced": [
       "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
     ],
     "error_message": null,
     "notes": null
   },
-  "task-index-column": {
-    "status": "completed",
-    "started_at": "2026-05-12T16:11:28.763716",
-    "completed_at": "2026-05-12T16:16:52.904068",
+  "task-db-return-notice-tables": {
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:40:10.536818",
+    "completed_at": null,
     "retries": 0,
-    "commit_hash": "00f9a08c",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-pagination-params": {
-    "status": "completed",
-    "started_at": "2026-05-12T16:16:53.303308",
-    "completed_at": "2026-05-12T16:17:32.156101",
-    "retries": 0,
-    "commit_hash": "4a7fd186",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-test": {
-    "status": "completed",
-    "started_at": "2026-05-12T16:09:15.625957",
-    "completed_at": "2026-05-12T16:10:28.762816",
-    "retries": 0,
-    "commit_hash": "c6f35245",
+    "commit_hash": null,
     "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
-  "task-frontend-verify": {
-    "status": "in_progress",
-    "started_at": "2026-05-12T16:17:32.575858",
+  "task-db-return-notice-dict-menu": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-db-logistics-order-tables": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-db-logistics-order-dict-menu": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-logistics-utils": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-logistics-entities": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-logistics-mappers": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-logistics-service": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-logistics-controller": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-return-notice-api": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-return-notice-use-js": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-return-notice-components": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-logistics-api": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-logistics-use-js": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-frontend-logistics-pages": {
+    "status": "pending",
+    "started_at": null,
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
