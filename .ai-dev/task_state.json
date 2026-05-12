@@ -12,18 +12,20 @@
     "notes": null
   },
   "task-db-return-notice-tables": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T18:40:10.536818",
-    "completed_at": null,
+    "completed_at": "2026-05-12T18:41:18.842036",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "8db10722",
+    "output_files_produced": [
+      "wms-ruoyi-master/script/sql/20260512_return_notice_tables.sql"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-db-return-notice-dict-menu": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:41:19.377558",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
