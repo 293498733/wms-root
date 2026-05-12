@@ -62,12 +62,14 @@
     "notes": null
   },
   "task-backend-logistics-utils": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T18:44:37.642375",
-    "completed_at": null,
+    "completed_at": "2026-05-12T18:45:08.817727",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "a72dae93",
+    "output_files_produced": [
+      "wms-ruoyi-master/ruoyi-common/ruoyi-common-redis/src/main/java/com/ruoyi/common/redis/utils/RepairLogisticsOrderNoUtils.java"
+    ],
     "error_message": null,
     "notes": null
   },
@@ -124,8 +126,8 @@
     "notes": null
   },
   "task-frontend-return-notice-use-js": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T18:45:09.384035",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
