@@ -43,3 +43,9 @@
 10:21:34 [WARNING] [goose] Parameters used to load this recipe:
 10:25:00 [INFO ] Task task-backend-unit-test committed: de1ece14
 10:25:00 [WARNING] Working tree is dirty, creating auto-stash
+10:25:00 [INFO ] task: goose run --recipe task-template.yaml --max-turns 45
+10:25:00 [WARNING] [goose] Loading recipe: Task - 端到端验证 — 核对通过/核对退回全流程
+10:25:00 [WARNING] [goose] Description: 执行单个原子开发任务。仅依赖文件上下文，不依赖对话记忆。
+10:25:00 [WARNING] [goose] Parameters used to load this recipe:
+10:27:34 [INFO ] Task task-e2e-confirm-reject committed: db382a38
+10:27:35 [WARNING] Working tree is dirty, creating auto-stash
