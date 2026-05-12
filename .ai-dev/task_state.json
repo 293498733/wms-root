@@ -84,11 +84,11 @@
     "notes": null
   },
   "task-backend-compile-test": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-12T15:31:10.149027",
-    "completed_at": null,
+    "completed_at": "2026-05-12T15:32:57.785309",
     "retries": 0,
-    "commit_hash": null,
+    "commit_hash": "a1df8619",
     "output_files_produced": [],
     "error_message": null,
     "notes": null
@@ -104,8 +104,8 @@
     "notes": null
   },
   "task-integration-test": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-12T15:32:58.181777",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
