@@ -1,85 +1,87 @@
 {
-  "task-db-menu-sql": {
+  "task-env-confirm": {
     "status": "completed",
-    "started_at": "2026-05-13T11:28:37.793156",
-    "completed_at": "2026-05-13T11:29:44.551275",
+    "started_at": "2026-05-13T15:13:35.926916",
+    "completed_at": "2026-05-13T15:14:45.100535",
     "retries": 0,
     "commit_hash": "",
     "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_repair_notice_menu.sql"
+      ".ai-dev/checklist-env.md"
     ],
     "error_message": null,
     "notes": null
   },
-  "task-backend-repair-notice-service": {
+  "task-db-dict-fix": {
     "status": "completed",
-    "started_at": "2026-05-13T11:29:44.903207",
-    "completed_at": "2026-05-13T11:32:44.742727",
+    "started_at": "2026-05-13T15:14:45.483877",
+    "completed_at": "2026-05-13T15:15:37.588749",
     "retries": 0,
-    "commit_hash": "c3182607",
+    "commit_hash": "",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue"
+    ],
+    "error_message": null,
+    "notes": null
+  },
+  "task-backend-optimize-sku-query": {
+    "status": "completed",
+    "started_at": "2026-05-13T15:15:37.901339",
+    "completed_at": "2026-05-13T15:17:08.074455",
+    "retries": 0,
+    "commit_hash": "",
     "output_files_produced": [
       "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
     ],
     "error_message": null,
     "notes": null
   },
-  "task-frontend-check-dialog": {
+  "task-frontend-empty-state": {
     "status": "completed",
-    "started_at": "2026-05-13T12:03:38.059163",
-    "completed_at": "2026-05-13T12:05:10.686770",
-    "retries": 1,
-    "commit_hash": "0c4170d0",
+    "started_at": "2026-05-13T15:17:08.449272",
+    "completed_at": "2026-05-13T15:18:34.446339",
+    "retries": 0,
+    "commit_hash": "",
     "output_files_produced": [
       "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
     ],
-    "error_message": "goose exit -1: Process killed by watchdog after 1800s",
-    "notes": null
-  },
-  "task-frontend-index-page": {
-    "status": "pending",
-    "started_at": null,
-    "completed_at": null,
-    "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
-  "task-backend-fix-receipt-quantity": {
+  "task-backend-detail-limit": {
     "status": "completed",
-    "started_at": "2026-05-13T12:02:56.349412",
-    "completed_at": "2026-05-13T12:03:37.678715",
-    "retries": 0,
-    "commit_hash": "",
-    "output_files_produced": [
-      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-repair-notice-query-methods": {
-    "status": "completed",
-    "started_at": "2026-05-13T12:05:11.345207",
-    "completed_at": "2026-05-13T12:07:36.650456",
+    "started_at": "2026-05-13T15:18:34.839624",
+    "completed_at": "2026-05-13T15:19:51.046323",
     "retries": 0,
     "commit_hash": "",
     "output_files_produced": [
       "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
     ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-compile-test": {
-    "status": "in_progress",
-    "started_at": "2026-05-13T12:07:37.115164",
-    "completed_at": null,
-    "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
     "error_message": null,
     "notes": null
   },
   "task-backend-unit-test": {
+    "status": "completed",
+    "started_at": "2026-05-13T12:10:01.009920",
+    "completed_at": "2026-05-13T12:10:52.307243",
+    "retries": 0,
+    "commit_hash": "",
+    "output_files_produced": [
+      ".ai-dev/outputs/06-unit-test-result.md"
+    ],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-start-process": {
+    "status": "in_progress",
+    "started_at": "2026-05-13T15:19:51.417631",
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-confirm-reject": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -89,7 +91,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-frontend-build-test": {
+  "task-e2e-subpage-pagination": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -99,17 +101,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-e2e-full-flow": {
-    "status": "pending",
-    "started_at": null,
-    "completed_at": null,
-    "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
-    "error_message": null,
-    "notes": null
-  },
-  "task-e2e-pagination-edge": {
+  "task-e2e-edge-cases": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
