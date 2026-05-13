@@ -1,81 +1,19 @@
 {
-  "task-fix-check-ref-bug": {
+  "task-db-menu-sql": {
     "status": "completed",
-    "started_at": "2026-05-12T18:40:06.557159",
-    "completed_at": "2026-05-12T18:40:10.277320",
+    "started_at": "2026-05-13T11:28:37.793156",
+    "completed_at": "2026-05-13T11:29:44.551275",
     "retries": 0,
     "commit_hash": "",
     "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+      "wms-ruoyi-master/script/sql/20260512_repair_notice_menu.sql"
     ],
     "error_message": null,
     "notes": null
   },
-  "task-db-return-notice-tables": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:40:10.536818",
-    "completed_at": "2026-05-12T18:41:18.842036",
-    "retries": 0,
-    "commit_hash": "8db10722",
-    "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_return_notice_tables.sql"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-db-return-notice-dict-menu": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:41:19.377558",
-    "completed_at": "2026-05-12T18:42:30.130510",
-    "retries": 0,
-    "commit_hash": "7a114529",
-    "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_return_notice_dict.sql",
-      "wms-ruoyi-master/script/sql/20260512_return_notice_menu.sql"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-db-logistics-order-tables": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:42:57.273407",
-    "completed_at": "2026-05-12T18:43:42.486651",
-    "retries": 0,
-    "commit_hash": "194317d8",
-    "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_tables.sql"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-db-logistics-order-dict-menu": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:43:43.022240",
-    "completed_at": "2026-05-12T18:44:37.121459",
-    "retries": 0,
-    "commit_hash": "39dd8e18",
-    "output_files_produced": [
-      "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_dict.sql",
-      "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_menu.sql"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-logistics-utils": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:44:37.642375",
-    "completed_at": "2026-05-12T18:45:08.817727",
-    "retries": 0,
-    "commit_hash": "a72dae93",
-    "output_files_produced": [
-      "wms-ruoyi-master/ruoyi-common/ruoyi-common-redis/src/main/java/com/ruoyi/common/redis/utils/RepairLogisticsOrderNoUtils.java"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-backend-logistics-entities": {
+  "task-backend-repair-notice-service": {
     "status": "in_progress",
-    "started_at": "2026-05-12T18:48:41.266464",
+    "started_at": "2026-05-13T11:29:44.903207",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
@@ -83,7 +21,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-backend-logistics-mappers": {
+  "task-frontend-check-dialog": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -93,7 +31,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-backend-logistics-service": {
+  "task-frontend-index-page": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -103,7 +41,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-backend-logistics-controller": {
+  "task-backend-fix-receipt-quantity": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -113,31 +51,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-frontend-return-notice-api": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:42:30.701615",
-    "completed_at": "2026-05-12T18:42:56.765164",
-    "retries": 0,
-    "commit_hash": "093fbbdc",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/api/wms/returnNotice.js"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-frontend-return-notice-use-js": {
-    "status": "completed",
-    "started_at": "2026-05-12T18:45:09.384035",
-    "completed_at": "2026-05-12T18:48:40.703471",
-    "retries": 0,
-    "commit_hash": "56b72bd0",
-    "output_files_produced": [
-      "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/useReturnNotice.js"
-    ],
-    "error_message": null,
-    "notes": null
-  },
-  "task-frontend-return-notice-components": {
+  "task-backend-repair-notice-query-methods": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -147,7 +61,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-frontend-logistics-api": {
+  "task-backend-compile-test": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -157,7 +71,7 @@
     "error_message": null,
     "notes": null
   },
-  "task-frontend-logistics-use-js": {
+  "task-backend-unit-test": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
@@ -167,7 +81,27 @@
     "error_message": null,
     "notes": null
   },
-  "task-frontend-logistics-pages": {
+  "task-frontend-build-test": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-full-flow": {
+    "status": "pending",
+    "started_at": null,
+    "completed_at": null,
+    "retries": 0,
+    "commit_hash": null,
+    "output_files_produced": [],
+    "error_message": null,
+    "notes": null
+  },
+  "task-e2e-pagination-edge": {
     "status": "pending",
     "started_at": null,
     "completed_at": null,
