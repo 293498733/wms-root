@@ -66,3 +66,7 @@
 15:25:20 [INFO ] Synced 1 files from sandbox to project
 15:25:20 [INFO ] Synced 1 files from sandbox
 15:25:20 [INFO ] Sandbox destroyed: D:\MyPrj\进销存\.ai-dev\sandboxes\task-e2e-confirm-reject
+15:25:20 [INFO ] Task task-e2e-confirm-reject committed: ad694a3c
+15:25:26 [INFO ] Pushed to origin/refs/heads/master (branch=master)
+15:25:26 [INFO ] Snapshot built: 1116 files indexed
+15:25:26 [WARNING] Working tree is dirty, creating auto-stash

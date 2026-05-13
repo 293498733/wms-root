@@ -42,128 +42,73 @@
 
 #### 03-plan.md
 ```
+## File: 03-plan.md (574 lines, 31KB)
+
+### Document Structure
 # 工程方案：返修通知单.核对明细页面UI优化
-
-> 编制日期：2026-05-11
-> 依据文档：`requirement.md`（精炼需求）、`02-analysis.md`（需求分析）
-> 项目代码：`wms-ruoyi-master`（后端）、`ruo-yi-wms-vue-master`（前端）
-
----
-
 ## 版本记录
-
-| 版本 | 日期 | 变更人 | 变更说明 |
-|------|------|--------|---------|
-| v1.0 | 2026-05-11 | AI Agent | 初始版本，基于代码审计确认现状 |
-
----
-
 ## 总体结论
-
-**经完整代码审计确认：本需求的核心功能已在代码仓库中完整实现。** 需求文档是对现有实现的规范化精炼，并非新开发任务。工程方案以**"验证现有实现与需求的一致性"**为基调，列出已有功能的确认状态，并指出可选的优化方向。
-
----
-
 ## 1. 架构设计
-
 ### 1.1 涉及的模块
-
-| 模块 | 层级 | 已有文件 | 状态 |
-|------|------|---------|------|
-| 前端-核对明细弹窗 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue` | ✅ 已完整实现 |
-| 前端-业务逻辑组合 | 逻辑层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js` | ✅ 已完整实现 |
-| 前端-页面入口 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue` | ✅ 已实现 |
-| 前端-API层 | 通信层 | `ruo-yi-wms-vue-master/src/api/wms/repairNotice.js` | ✅ 已实现 |
-| 前端-仓库Store | 状态层 | `ruo-yi-wms-vue-master/src/store/modules/wms.js` | ✅ 已实现 |
-| 后端-Controller | 控制层 | `wms-ruoyi-master/ruoyi-admin-wms/.../controller/RepairNoticeController.java` | ✅ 已完整实现 |
-| 后端-Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeService.java` | ✅ 已完整实现 |
-| 后端-明细Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeDetailService.java` | ✅ 已实现 |
-| 后端-SKU查询Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ItemSkuService.java` | ✅ 已实现 |
-| 后端-入库单Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ReceiptOrderService.java` | ✅ 已实现 |
-| 后端-VO/BO | 模型层 | `RepairNoticeCheckDetailVo.java` / `RepairNoticeConfirmBo.java` / `RepairNoticeRejectBo.java` | ✅ 已完整实现 |
-| 后端-Entity/Mapper | 持久层 | `RepairNotice.java` / `RepairNoticeDetail.java` / `RepairNoticeMapper.java` / `RepairNoticeDetailMapper.java` | ✅ 已实现 |
-
 ### 1.2 模块间调用关系
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       前端 (ruo-yi-wms-vue-master)                   │
-│                                   
+### 1.3 数据流向
+#### 1.3.1 开始处理 → 获取核对明细
+#### 1.3.2 核对通过 → 入库
+#### 1.3.3 核对退回
+### 1.4 是否引入新依赖
+## 2. 接口定义（已有接口确认）
+### 2.1 开始处理 — 获取核对明细
+### 2.2 核对通过 — 入库
+### 2.3 核对退回
+### 2.4 错误码对照
+## 3. 数据模型
+### 3.1 表结构确认
+#### repair_notice（返修通知单主表）
+#### repair_notice_detail（返修通知单明细表）
+#### wms_item_sku（物品SKU表）
+#### wms_item（物品表）
+### 3.2 字典数据确认
+### 3.3 SQL 确认
+## 4. 代码变更
+### 4.1 核心结论
+### 4.2 前端代码逐项确认
+### 4.3 后端代码逐项确认
+### 4.4 可选优化清单（非必须，建议但不强制）
+#### 🟡 P2级优化建议
+#### 🟢 P3级建议（低优）
+### 4.5 需要修改/新增/删除的文件清单
+#### 必须修改的文件
+#### 建议修改的文件（可选优化#1 — 消除重复查询）
+#### 建议修改的文件（可选优化#2 — 字典前缀）
+#### 建议修改的文件（可选优化#3 — 空明细提示）
+#### 需要新增的文件
+#### 需要删除的文件
+### 4.6 配置变更
+## 5. 测试方案
+  ... and 12 more headings
 ```
 
 ### Relevant Input Files
 
 #### ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue
 ```
-<template>
-  <el-dialog
-    title="核对明细"
-    v-model="localOpen"
-    width="1000px"
-    append-to-body
-    destroy-on-close
-  >
-    <!-- 说明文字 -->
-    <div class="dialog-tip" style="font-size: 13px; color: #909399; padding: 0 4px 12px;">
-      提示：物品按规格型号分组汇总，点击行首箭头可展开查看具体物品条码。核对规格型号的预期数量与实际数量是否一致。
-    </div>
-    <div v-if="checkDetail" class="check-detail-wrapper">
-      <el-descriptions :column="2" border size="small" class="mb16">
-        <el-descriptions-item label="返修通知单号">{{ checkDetail.noticeNo }}</el-descriptions-item>
-        <el-descriptions-item label="状态">处理中</el-descriptions-item>
-      </el-descriptions>
+## File: RepairNoticeCheckDialog.vue (624 lines, 17KB)
 
-      <el-form ref="checkFzormRef" :model="checkForm" label-width="80px">
-        <el-form-item label="入库仓库" prop="warehouseId" :rules="[{ required: true, message: '请选择入库仓库', trigger: 'change' }]">
-          <el-select v-model="checkForm.warehouseId" placeholder="请选择入库仓库" filterable style="width: 300px">
-            <el-option
-              v-for="item in warehouseList"
-              :key="item.id"
-              :label="item.warehouseName"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <!-- 空状态提示：无可核对的物品明细 -->
-      <el-empty v-if="groupedDetails.length === 0" description="该通知单无可核对的物品明细" />
-      
-      <!-- 按规格型号分组的汇总表格 -->
-      <template v-else>
-      <el-table :data="groupedDetails" border size="small" row-key="skuName">
-        <el-table-column type="expand" width="50">
-          <template #default="{ row }">
-            <div class="detail-sub-table-wrapper">
-              <el-table
-                :data="paginatedItems(row)"
-                border
-                size="small"
-                :show-header="true"
-                style="width: 100%"
-              >
-                <el-table-column label="序号" type="index" width="60" align="center"/>
-                <el-table-column prop="barcode" label="条码" min-width="160"/>
-                <el-table-column prop="expectedQuantity" label="预期数量" width="90" align="center"/>
-                <el-table-column label="实际数量" width="130" align="center">
-                  <template #default="{ row: item }">
-                    <el-input-number
-                      v-model="item.actualQuantity"
-                      :min="0"
-                      :controls="false"
-                      size="small"
-                      style="width: 90px"
-                      @change="onQuantityChange(item, row)"
-                    />
-                  </template>
-                </el-table-column>
-                <el-table-column label="匹配" width="80" align="center">
-                  <template #default="{ row: item }">
-                    <el-tag v-if="item.matched" type="success" size="small">一致</el-tag>
-                    <el-tag v-else type="danger" size="small">不一致</el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <!-- 分页：子表明细超过 200 条时启用 -->
-              <div v-if="r
+### Component Structure
+- `<template>` (25 lines)
+- `<template>` (43 lines)
+- `<template>` (44 lines)
+- `<template>` (52 lines)
+- `<template>` (59 lines)
+- `<template>` (59 lines)
+- `<template>` (60 lines)
+- `<template>` (61 lines)
+- `<template>` (62 lines)
+- `<template>` (69 lines)
+- `<template>` (78 lines)
+- `<template>` (78 lines)
+- `<template>` (102 lines)
+- `<template>` (102 lines)
+- `<script>` (293 lines)
+- `<style>` (79 lines)
 ```
