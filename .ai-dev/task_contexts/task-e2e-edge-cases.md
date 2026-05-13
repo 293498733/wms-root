@@ -47,206 +47,144 @@
 
 #### 03-plan.md
 ```
+## File: 03-plan.md (574 lines, 31KB)
+
+### Document Structure
 # 工程方案：返修通知单.核对明细页面UI优化
-
-> 编制日期：2026-05-11
-> 依据文档：`requirement.md`（精炼需求）、`02-analysis.md`（需求分析）
-> 项目代码：`wms-ruoyi-master`（后端）、`ruo-yi-wms-vue-master`（前端）
-
----
-
 ## 版本记录
-
-| 版本 | 日期 | 变更人 | 变更说明 |
-|------|------|--------|---------|
-| v1.0 | 2026-05-11 | AI Agent | 初始版本，基于代码审计确认现状 |
-
----
-
 ## 总体结论
-
-**经完整代码审计确认：本需求的核心功能已在代码仓库中完整实现。** 需求文档是对现有实现的规范化精炼，并非新开发任务。工程方案以**"验证现有实现与需求的一致性"**为基调，列出已有功能的确认状态，并指出可选的优化方向。
-
----
-
 ## 1. 架构设计
-
 ### 1.1 涉及的模块
-
-| 模块 | 层级 | 已有文件 | 状态 |
-|------|------|---------|------|
-| 前端-核对明细弹窗 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue` | ✅ 已完整实现 |
-| 前端-业务逻辑组合 | 逻辑层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js` | ✅ 已完整实现 |
-| 前端-页面入口 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue` | ✅ 已实现 |
-| 前端-API层 | 通信层 | `ruo-yi-wms-vue-master/src/api/wms/repairNotice.js` | ✅ 已实现 |
-| 前端-仓库Store | 状态层 | `ruo-yi-wms-vue-master/src/store/modules/wms.js` | ✅ 已实现 |
-| 后端-Controller | 控制层 | `wms-ruoyi-master/ruoyi-admin-wms/.../controller/RepairNoticeController.java` | ✅ 已完整实现 |
-| 后端-Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeService.java` | ✅ 已完整实现 |
-| 后端-明细Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeDetailService.java` | ✅ 已实现 |
-| 后端-SKU查询Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ItemSkuService.java` | ✅ 已实现 |
-| 后端-入库单Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ReceiptOrderService.java` | ✅ 已实现 |
-| 后端-VO/BO | 模型层 | `RepairNoticeCheckDetailVo.java` / `RepairNoticeConfirmBo.java` / `RepairNoticeRejectBo.java` | ✅ 已完整实现 |
-| 后端-Entity/Mapper | 持久层 | `RepairNotice.java` / `RepairNoticeDetail.java` / `RepairNoticeMapper.java` / `RepairNoticeDetailMapper.java` | ✅ 已实现 |
-
 ### 1.2 模块间调用关系
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       前端 (ruo-yi-wms-vue-master)                   │
-│                                   
+### 1.3 数据流向
+#### 1.3.1 开始处理 → 获取核对明细
+#### 1.3.2 核对通过 → 入库
+#### 1.3.3 核对退回
+### 1.4 是否引入新依赖
+## 2. 接口定义（已有接口确认）
+### 2.1 开始处理 — 获取核对明细
+### 2.2 核对通过 — 入库
+### 2.3 核对退回
+### 2.4 错误码对照
+## 3. 数据模型
+### 3.1 表结构确认
+#### repair_notice（返修通知单主表）
+#### repair_notice_detail（返修通知单明细表）
+#### wms_item_sku（物品SKU表）
+#### wms_item（物品表）
+### 3.2 字典数据确认
+### 3.3 SQL 确认
+## 4. 代码变更
+### 4.1 核心结论
+### 4.2 前端代码逐项确认
+### 4.3 后端代码逐项确认
+### 4.4 可选优化清单（非必须，建议但不强制）
+#### 🟡 P2级优化建议
+#### 🟢 P3级建议（低优）
+### 4.5 需要修改/新增/删除的文件清单
+#### 必须修改的文件
+#### 建议修改的文件（可选优化#1 — 消除重复查询）
+#### 建议修改的文件（可选优化#2 — 字典前缀）
+#### 建议修改的文件（可选优化#3 — 空明细提示）
+#### 需要新增的文件
+#### 需要删除的文件
+### 4.6 配置变更
+## 5. 测试方案
+  ... and 12 more headings
 ```
 
 #### 02-analysis.md
 ```
+## File: 02-analysis.md (348 lines, 20KB)
+
+### Document Structure
 # 需求分析报告：返修通知单核对明细页面UI调整
-
-> 分析日期：2026-05-09
-> 分析人：Goose AI Agent
-> 前置文档：[requirement.md](../requirement.md) | [profile.yml](../profile.yml)
-> 代码仓库：`D:\MyPrj\进销存`
-
----
-
 ## 1. 功能拆分
-
 ### P0（核心功能，本次必须实现）
-
-| # | 功能名称 | 涉及模块 | 关联数据表 | 优先级 |
-|---|---------|---------|-----------|-------|
-| 1 | **核对明细按规格型号汇总展示** | `ruo-yi-wms-vue-master` 前端 | —（纯UI展示层变更） | P0 |
-| | | views: `RepairNoticeCheckDialog.vue` | | |
-| | | 后端返回VO: `RepairNoticeCheckDetailVo.java` | | |
-| 2 | **汇总行数量匹配逻辑** | 前端 `RepairNoticeCheckDialog.vue` | —（前端计算逻辑） | P0 |
-| | 按规格型号（skuName）分组统计预期数量与实际数量，对比匹配 | | | |
-| 3 | **条码明细下拉展开** | 前端 `RepairNoticeCheckDialog.vue` | —（纯UI交互变更） | P0 |
-| | 点击展开/收起该规格型号下的所有条码明细 | | | |
-
 ### P1（重要，建议本次实现）
-
-| # | 功能名称 | 涉及模块 | 关联数据表 | 优先级 |
-|---|---------|---------|-----------|-------|
-| 4 | **核对明细分页支持** | 前端 `RepairNoticeCheckDialog.vue` | —（UI分页组件） | P1 |
-| | 当条码明细行数较多时（>200条），启用分页展示 | | | |
-| 5 | **数据接口适配** | `RepairNoticeService.java` | —（后端VO调整） | P1 |
-| | `startProcess` 接口返回的 `CheckDetailItem` 需要携带 `itemId` 用于前端分组 | | | |
-| | VO: `RepairNoticeCheckDetailVo.java` | | | |
-
 ### P2（后续迭代）
-
-| # | 功能名称 | 涉及模块 | 关联数据表 | 优先级 |
-|---|---------|---------|-----------|-------|
-| 6 | **批量实际数量修改** | 前端 `RepairNoticeCheckDialog.vue` | — | P2 |
-| | 在汇总行上直接修改实际数量，同步更新至明细行 | | | |
-| 7 | **分组统计角标/徽标** | 前端 `RepairNoticeCheckDialog.vue` | — | P2 |
-| | 在规格型号行展示该分组下的明细条数 | | | |
-
----
-
 ## 2. 数据流
-
 ### 2.1 数据来源
-
-```
-用户操作：返修通知单列表 → 点击 "开始处理" 按钮
-     ↓
-前端调用 POST /wms/RepairNotice/startProcess/{id}
-     ↓
-后端 RepairsNoticeService.startProcess() 处理
-     ↓
-    ├── 校验：状态必须为 "已提交"(status=2)
-    ├── 校验：当前用户机构必须等于 handlerDeptId
-    ├── 查询 RepairNoticeDetail（notice_id → sku_id 列表）
-    ├── 批量查询 ItemSkuMapVo（sku_id → skuName, barcode, itemId）
-    └── 返回 RepairNoticeCheckDetailVo
-```
-
 ### 2.2 数据流转（当前逻辑）
-
-```
-数据库表：
-  repair_notice (主表) 
-    ├── id, notice_no, status, handler_dept_id, ...
-    └── repair_notice_detail (明细)
-          └── id, notice_id (FK→repair_notice.id), sku_id (FK→wms_item_sku.id)
-
-数据库表：
-  wms_ite
+### 2.3 数据最终存储
+### 2.4 本次变更后的数据流
+## 3. 界面逻辑
+### 3.1 涉及页面
+### 3.2 交互流程
+#### 当前交互（现状）
+#### 变更后交互（本次需求）
+### 3.3 输入验证
+### 3.4 分页逻辑
+## 4. 不确定项（最关键的部分）
+### 4.1 业务规则不确定项
+### 4.2 技术不确定项
+### 4.3 现有代码中未找到对应实现的问题
+### 4.4 兼容性不确定项
+## 5. 影响范围
+### 5.1 需要修改的文件
+#### 后端（Java）
+#### 前端（Vue）
+#### SQL 脚本（新增）
+### 5.2 数据库变更
+### 5.3 配置变更
+### 5.4 接口兼容性
+### 5.5 回归影响
+## 附录：本次实际修改的文件清单
+### 后端文件（wms-ruoyi-master）
+### 前端文件（ruo-yi-wms-vue-master）
+## 附录：关键代码位置索引
 ```
 
 ### Relevant Input Files
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java
 ```
-package com.ruoyi.wms.service;
+## File: RepairNoticeService.java (501 lines, 21KB)
 
-import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.redis.utils.RedisUtils;
-import com.ruoyi.common.redis.utils.RepairNoticeNoUtils;
-import com.ruoyi.common.satoken.utils.LoginHelper;
-import com.ruoyi.wms.domain.bo.RepairNoticeBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeConfirmBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeDetailBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeMobileSubmitBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeRejectBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.RepairNotice;
-import com.ruoyi.wms.domain.vo.ItemSkuMapVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo.CheckDetailItem;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo.GroupedCheckDetail;
-import com.ruoyi.wms.domain.vo.RepairNoticeDetailVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeVo;
-import com.ruoyi.wms.domain.vo.ReturnableSkuVo;
-import com.ruoyi.wms.mapper.RepairNoticeMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+**Package**: package com.ruoyi.wms.service;
+**Imports**: 38 packages
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+### Classes/Interfaces (1)
+- `public class RepairNoticeService {`
 
-@RequiredArgsConstructor
-@Service
-public class RepairNoticeService {
+### Constants/Fields
+private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
+private static final Long REPAIR_RECEIPT_OPT_TYPE = 1L;
 
-    private final RepairNoticeMapper repairNoticeMapper;
-    private final RepairNoticeDetailService repairNoticeDetailService;
-    private final ItemSkuService itemSkuService;
-    private final ReceiptOrderService receiptOrderService;
-    private final com.ruoyi.wms.mapper.ReceiptOrderMapper receiptOrderMapper;
-    private final com.ruoyi.wms.mapper.ReceiptOrderDetailMapper receiptOrderDetailMapper;
-    private final com.ruoyi.wms.mapper.ReturnNoticeMapper returnNoticeMapper;
-    private final com.ruoyi.wms.mapper.ReturnNoticeDetailMapper returnNoticeDetailMapper;
-
-    /**
-     * 核对明细最大数量限制，防止全量加载导致 OOM
-     */
-    private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
-
-    public R
+### Methods (33)
+- `public RepairNoticeCheckDetailVo startProcess(Long id) {`
+- `throw new ServiceException("只有已提交状态的单据才能开始处理");`
+- `throw new ServiceException("只有处理机构所属部门才能开始处理该单据");`
+- `throw new ServiceException("通知单明细不能为空");`
+- `throw new ServiceException("该通知单物品明细数量超过上限（最大" + MAX_CHECK_DETAIL_LIMIT + "条），当前" + details.size() + "条，请分批处理");`
+- `public Long confirmCheck(Long noticeId, RepairNoticeConfirmBo bo) {`
+- `throw new ServiceException("只有已提交状态的单据才能核对通过");`
+- `throw new ServiceException("只有处理机构所属部门才能核对该单据");`
+- `throw new ServiceException("通知单明细不能为空");`
+- `throw new ServiceException("入库物品不属于所选返修通知单");`
+- `throw new ServiceException("存在规格型号实际数量与预期数量不一致，请核对后重新提交");`
+- `public void rejectCheck(Long noticeId, RepairNoticeRejectBo bo) {`
+- `throw new ServiceException("只有已提交状态的单据才能退回");`
+- `throw new ServiceException("只有处理机构所属部门才能退回该单据");`
+- `private List<CheckDetailItem> buildCheckDetailItems(List<RepairNoticeDetailVo> details) {`
+- `private List<CheckDetailItem> buildSubmittedCheckItems(`
+- `private List<GroupedCheckDetail> buildGroupedDetails(List<CheckDetailItem> items) {`
+- `public RepairNoticeVo queryById(Long id) {`
+- `public TableDataInfo<RepairNoticeVo> queryPageList(RepairNoticeBo bo, PageQuery pageQuery) {`
+- `public List<RepairNoticeVo> queryList(RepairNoticeBo bo) {`
+- `public TableDataInfo<RepairNoticeVo> queryReceiptSelectPage(String noticeNo, PageQuery pageQuery) {`
+- `public void insertByBo(RepairNoticeBo bo) {`
+- `public void updateByBo(RepairNoticeBo bo) {`
+- `public void saveDraft(RepairNoticeBo bo) {`
+- `public void submitNotice(RepairNoticeBo bo) {`
+- `public RepairNoticeVo mobileSubmit(RepairNoticeMobileSubmitBo bo) {`
+- `return queryById(notice.getId());`
+- `public void deleteByIds(List<Long> ids) {`
+- `throw new ServiceException("删除失败", HttpStatus.CONFLICT,`
+- `private RepairNotice getByIdRequired(Long id) {`
+- `throw new ServiceException("返修通知单不存在");`
+- `private LambdaQueryWrapper<RepairNotice> buildQueryWrapper(RepairNoticeBo bo) {`
+- `private String generateNoticeNo() {`
 ```
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java
@@ -337,11 +275,10 @@ public class RepairNoticeController extends BaseController {
   <div class="app-container">
     <el-card>
       <RepairNoticeQuery
-        ref="queryComponentRef"
         v-model:queryParams="queryParams"
         :show-search="showSearch"
-        :status-options="wms_repair_notice_status"
-        :handover-status-options="wms_repair_handover_status"
+        :status-options="repair_notice_status"
+        :handover-status-options="handover_status"
         @search="handleQuery"
         @reset="resetQuery"
       />
@@ -354,8 +291,8 @@ public class RepairNoticeController extends BaseController {
         :total="total"
         :query-params="queryParams"
         :show-search="showSearch"
-        :status-options="wms_repair_notice_status"
-        :handover-status-options="wms_repair_handover_status"
+        :status-options="repair_notice_status"
+        :handover-status-options="handover_status"
         :can-edit="canEdit"
         :can-delete="canDelete"
         :can-submit="canSubmit"
@@ -373,21 +310,19 @@ public class RepairNoticeController extends BaseController {
     </el-card>
 
     <RepairNoticeDialog
-      ref="dialogRef"
       v-model:open="open"
       :title="title"
       :form="form"
       :rules="rules"
       :button-loading="buttonLoading"
-      :status-options="wms_repair_notice_status"
-      :handover-status-options="wms_repair_handover_status"
+      @cancel="cancel"
       @save-draft="saveDraft"
       @submit-process="submitProcess"
-      @cancel="cancel"
     />
 
     <RepairNoticeCheckDialog
-      v-model:open="checkDialogOpen"
+      ref="checkDialogRef"
+      v-model:visible="checkDialogOpen"
       :check-detail="checkDetailData"
       @confirm="handleCheckConfirm"
       @reject="handleCheckReject"
@@ -396,19 +331,23 @@ public class RepairNoticeController extends BaseController {
 </template>
 
 <script setup name="RepairNotice">
-import { getCurrentInstance } from "vue";
+import { getCurrentInstance, ref } from "vue";
 import RepairNoticeQuery from "./components/RepairNoticeQuery.vue";
 import RepairNoticeTable from "./components/RepairNoticeTable.vue";
 import RepairNoticeDialog from "./components/RepairNoticeDialog.vue";
 import RepairNoticeCheckDialog from "./components/RepairNoticeCheckDialog.vue";
+import { getNotice } from "@/api/wms/repairNotice";
 import useRepairNotice from "./useRepairNotice";
 
 const { proxy } = getCurrentInstance();
 
-const {
-  wms_repair_notice_status,
-  wms_repair_handover_status
-} = proxy.useDict("repair_notice_status", "handover_status");
+const { repair_notice_status, handover_status } = proxy.useDict(
+  "repair_notice_status",
+  "handover_status"
+);
+
+/** 核对弹窗组件引用 */
+const checkDialogRef = ref(null);
 
 const {
   open,
@@ -427,97 +366,53 @@ const {
   resetQuery,
   handleAdd,
   handleUpdate,
-  handleView,
+  handleView: useHandleView,
   handleDelete,
-  handleExport,
   saveDraft,
   submitProcess,
   handleStartProcess,
+  handleCheckConfirm: useHandleCheckConfirm,
+  handleCheckReject: useHandleCheckReject,
   cancel,
   canEdit,
   canDelete,
   canSubmit,
   canStartProcess,
   checkDialogOpen,
-  checkDetailData,
-  handleCheckConfirm,
-  handleCheckReject
+  checkDetailData
 } = useRepairNotice(proxy);
-</script>
 
+/**
+ * 查看弹窗 - 加载详情数据
+ * 覆盖 useRepairNotice.js 中的 handleView（路由跳转），改为弹窗展示
+ */
+function handleView(row) {
+  const id = row?.id;
+  if (!id) return;
+
+  getNotice(id).then((response) => {
+    const data = respo
 ```
 
 #### ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue
 ```
-<template>
-  <el-dialog
-    title="核对明细"
-    v-model="localOpen"
-    width="1000px"
-    append-to-body
-    destroy-on-close
-  >
-    <!-- 说明文字 -->
-    <div class="dialog-tip" style="font-size: 13px; color: #909399; padding: 0 4px 12px;">
-      提示：物品按规格型号分组汇总，点击行首箭头可展开查看具体物品条码。核对规格型号的预期数量与实际数量是否一致。
-    </div>
-    <div v-if="checkDetail" class="check-detail-wrapper">
-      <el-descriptions :column="2" border size="small" class="mb16">
-        <el-descriptions-item label="返修通知单号">{{ checkDetail.noticeNo }}</el-descriptions-item>
-        <el-descriptions-item label="状态">处理中</el-descriptions-item>
-      </el-descriptions>
+## File: RepairNoticeCheckDialog.vue (624 lines, 17KB)
 
-      <el-form ref="checkFzormRef" :model="checkForm" label-width="80px">
-        <el-form-item label="入库仓库" prop="warehouseId" :rules="[{ required: true, message: '请选择入库仓库', trigger: 'change' }]">
-          <el-select v-model="checkForm.warehouseId" placeholder="请选择入库仓库" filterable style="width: 300px">
-            <el-option
-              v-for="item in warehouseList"
-              :key="item.id"
-              :label="item.warehouseName"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <!-- 空状态提示：无可核对的物品明细 -->
-      <el-empty v-if="groupedDetails.length === 0" description="该通知单无可核对的物品明细" />
-      
-      <!-- 按规格型号分组的汇总表格 -->
-      <template v-else>
-      <el-table :data="groupedDetails" border size="small" row-key="skuName">
-        <el-table-column type="expand" width="50">
-          <template #default="{ row }">
-            <div class="detail-sub-table-wrapper">
-              <el-table
-                :data="paginatedItems(row)"
-                border
-                size="small"
-                :show-header="true"
-                style="width: 100%"
-              >
-                <el-table-column label="序号" type="index" width="60" align="center"/>
-                <el-table-column prop="barcode" label="条码" min-width="160"/>
-                <el-table-column prop="expectedQuantity" label="预期数量" width="90" align="center"/>
-                <el-table-column label="实际数量" width="130" align="center">
-                  <template #default="{ row: item }">
-                    <el-input-number
-                      v-model="item.actualQuantity"
-                      :min="0"
-                      :controls="false"
-                      size="small"
-                      style="width: 90px"
-                      @change="onQuantityChange(item, row)"
-                    />
-                  </template>
-                </el-table-column>
-                <el-table-column label="匹配" width="80" align="center">
-                  <template #default="{ row: item }">
-                    <el-tag v-if="item.matched" type="success" size="small">一致</el-tag>
-                    <el-tag v-else type="danger" size="small">不一致</el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <!-- 分页：子表明细超过 200 条时启用 -->
-              <div v-if="r
+### Component Structure
+- `<template>` (25 lines)
+- `<template>` (43 lines)
+- `<template>` (44 lines)
+- `<template>` (52 lines)
+- `<template>` (59 lines)
+- `<template>` (59 lines)
+- `<template>` (60 lines)
+- `<template>` (61 lines)
+- `<template>` (62 lines)
+- `<template>` (69 lines)
+- `<template>` (78 lines)
+- `<template>` (78 lines)
+- `<template>` (102 lines)
+- `<template>` (102 lines)
+- `<script>` (293 lines)
+- `<style>` (79 lines)
 ```
