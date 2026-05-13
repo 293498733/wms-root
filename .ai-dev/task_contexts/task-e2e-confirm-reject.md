@@ -57,207 +57,147 @@ Body: { rejectReason: String }
 
 #### 03-plan.md
 ```
+## File: 03-plan.md (574 lines, 31KB)
+
+### Document Structure
 # 工程方案：返修通知单.核对明细页面UI优化
-
-> 编制日期：2026-05-11
-> 依据文档：`requirement.md`（精炼需求）、`02-analysis.md`（需求分析）
-> 项目代码：`wms-ruoyi-master`（后端）、`ruo-yi-wms-vue-master`（前端）
-
----
-
 ## 版本记录
-
-| 版本 | 日期 | 变更人 | 变更说明 |
-|------|------|--------|---------|
-| v1.0 | 2026-05-11 | AI Agent | 初始版本，基于代码审计确认现状 |
-
----
-
 ## 总体结论
-
-**经完整代码审计确认：本需求的核心功能已在代码仓库中完整实现。** 需求文档是对现有实现的规范化精炼，并非新开发任务。工程方案以**"验证现有实现与需求的一致性"**为基调，列出已有功能的确认状态，并指出可选的优化方向。
-
----
-
 ## 1. 架构设计
-
 ### 1.1 涉及的模块
-
-| 模块 | 层级 | 已有文件 | 状态 |
-|------|------|---------|------|
-| 前端-核对明细弹窗 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue` | ✅ 已完整实现 |
-| 前端-业务逻辑组合 | 逻辑层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js` | ✅ 已完整实现 |
-| 前端-页面入口 | 视图层 | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue` | ✅ 已实现 |
-| 前端-API层 | 通信层 | `ruo-yi-wms-vue-master/src/api/wms/repairNotice.js` | ✅ 已实现 |
-| 前端-仓库Store | 状态层 | `ruo-yi-wms-vue-master/src/store/modules/wms.js` | ✅ 已实现 |
-| 后端-Controller | 控制层 | `wms-ruoyi-master/ruoyi-admin-wms/.../controller/RepairNoticeController.java` | ✅ 已完整实现 |
-| 后端-Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeService.java` | ✅ 已完整实现 |
-| 后端-明细Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/RepairNoticeDetailService.java` | ✅ 已实现 |
-| 后端-SKU查询Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ItemSkuService.java` | ✅ 已实现 |
-| 后端-入库单Service | 业务层 | `wms-ruoyi-master/ruoyi-admin-wms/.../service/ReceiptOrderService.java` | ✅ 已实现 |
-| 后端-VO/BO | 模型层 | `RepairNoticeCheckDetailVo.java` / `RepairNoticeConfirmBo.java` / `RepairNoticeRejectBo.java` | ✅ 已完整实现 |
-| 后端-Entity/Mapper | 持久层 | `RepairNotice.java` / `RepairNoticeDetail.java` / `RepairNoticeMapper.java` / `RepairNoticeDetailMapper.java` | ✅ 已实现 |
-
 ### 1.2 模块间调用关系
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                       前端 (ruo-yi-wms-vue-master)                   │
-│                                   
+### 1.3 数据流向
+#### 1.3.1 开始处理 → 获取核对明细
+#### 1.3.2 核对通过 → 入库
+#### 1.3.3 核对退回
+### 1.4 是否引入新依赖
+## 2. 接口定义（已有接口确认）
+### 2.1 开始处理 — 获取核对明细
+### 2.2 核对通过 — 入库
+### 2.3 核对退回
+### 2.4 错误码对照
+## 3. 数据模型
+### 3.1 表结构确认
+#### repair_notice（返修通知单主表）
+#### repair_notice_detail（返修通知单明细表）
+#### wms_item_sku（物品SKU表）
+#### wms_item（物品表）
+### 3.2 字典数据确认
+### 3.3 SQL 确认
+## 4. 代码变更
+### 4.1 核心结论
+### 4.2 前端代码逐项确认
+### 4.3 后端代码逐项确认
+### 4.4 可选优化清单（非必须，建议但不强制）
+#### 🟡 P2级优化建议
+#### 🟢 P3级建议（低优）
+### 4.5 需要修改/新增/删除的文件清单
+#### 必须修改的文件
+#### 建议修改的文件（可选优化#1 — 消除重复查询）
+#### 建议修改的文件（可选优化#2 — 字典前缀）
+#### 建议修改的文件（可选优化#3 — 空明细提示）
+#### 需要新增的文件
+#### 需要删除的文件
+### 4.6 配置变更
+## 5. 测试方案
+  ... and 12 more headings
 ```
 
 ### Relevant Input Files
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java
 ```
-package com.ruoyi.wms.service;
+## File: RepairNoticeService.java (501 lines, 21KB)
 
-import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.redis.utils.RedisUtils;
-import com.ruoyi.common.redis.utils.RepairNoticeNoUtils;
-import com.ruoyi.common.satoken.utils.LoginHelper;
-import com.ruoyi.wms.domain.bo.RepairNoticeBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeConfirmBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeDetailBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeMobileSubmitBo;
-import com.ruoyi.wms.domain.bo.RepairNoticeRejectBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.RepairNotice;
-import com.ruoyi.wms.domain.vo.ItemSkuMapVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo.CheckDetailItem;
-import com.ruoyi.wms.domain.vo.RepairNoticeCheckDetailVo.GroupedCheckDetail;
-import com.ruoyi.wms.domain.vo.RepairNoticeDetailVo;
-import com.ruoyi.wms.domain.vo.RepairNoticeVo;
-import com.ruoyi.wms.domain.vo.ReturnableSkuVo;
-import com.ruoyi.wms.mapper.RepairNoticeMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+**Package**: package com.ruoyi.wms.service;
+**Imports**: 38 packages
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+### Classes/Interfaces (1)
+- `public class RepairNoticeService {`
 
-@RequiredArgsConstructor
-@Service
-public class RepairNoticeService {
+### Constants/Fields
+private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
+private static final Long REPAIR_RECEIPT_OPT_TYPE = 1L;
 
-    private final RepairNoticeMapper repairNoticeMapper;
-    private final RepairNoticeDetailService repairNoticeDetailService;
-    private final ItemSkuService itemSkuService;
-    private final ReceiptOrderService receiptOrderService;
-    private final com.ruoyi.wms.mapper.ReceiptOrderMapper receiptOrderMapper;
-    private final com.ruoyi.wms.mapper.ReceiptOrderDetailMapper receiptOrderDetailMapper;
-    private final com.ruoyi.wms.mapper.ReturnNoticeMapper returnNoticeMapper;
-    private final com.ruoyi.wms.mapper.ReturnNoticeDetailMapper returnNoticeDetailMapper;
-
-    /**
-     * 核对明细最大数量限制，防止全量加载导致 OOM
-     */
-    private static final int MAX_CHECK_DETAIL_LIMIT = 5000;
-
-    public R
+### Methods (33)
+- `public RepairNoticeCheckDetailVo startProcess(Long id) {`
+- `throw new ServiceException("只有已提交状态的单据才能开始处理");`
+- `throw new ServiceException("只有处理机构所属部门才能开始处理该单据");`
+- `throw new ServiceException("通知单明细不能为空");`
+- `throw new ServiceException("该通知单物品明细数量超过上限（最大" + MAX_CHECK_DETAIL_LIMIT + "条），当前" + details.size() + "条，请分批处理");`
+- `public Long confirmCheck(Long noticeId, RepairNoticeConfirmBo bo) {`
+- `throw new ServiceException("只有已提交状态的单据才能核对通过");`
+- `throw new ServiceException("只有处理机构所属部门才能核对该单据");`
+- `throw new ServiceException("通知单明细不能为空");`
+- `throw new ServiceException("入库物品不属于所选返修通知单");`
+- `throw new ServiceException("存在规格型号实际数量与预期数量不一致，请核对后重新提交");`
+- `public void rejectCheck(Long noticeId, RepairNoticeRejectBo bo) {`
+- `throw new ServiceException("只有已提交状态的单据才能退回");`
+- `throw new ServiceException("只有处理机构所属部门才能退回该单据");`
+- `private List<CheckDetailItem> buildCheckDetailItems(List<RepairNoticeDetailVo> details) {`
+- `private List<CheckDetailItem> buildSubmittedCheckItems(`
+- `private List<GroupedCheckDetail> buildGroupedDetails(List<CheckDetailItem> items) {`
+- `public RepairNoticeVo queryById(Long id) {`
+- `public TableDataInfo<RepairNoticeVo> queryPageList(RepairNoticeBo bo, PageQuery pageQuery) {`
+- `public List<RepairNoticeVo> queryList(RepairNoticeBo bo) {`
+- `public TableDataInfo<RepairNoticeVo> queryReceiptSelectPage(String noticeNo, PageQuery pageQuery) {`
+- `public void insertByBo(RepairNoticeBo bo) {`
+- `public void updateByBo(RepairNoticeBo bo) {`
+- `public void saveDraft(RepairNoticeBo bo) {`
+- `public void submitNotice(RepairNoticeBo bo) {`
+- `public RepairNoticeVo mobileSubmit(RepairNoticeMobileSubmitBo bo) {`
+- `return queryById(notice.getId());`
+- `public void deleteByIds(List<Long> ids) {`
+- `throw new ServiceException("删除失败", HttpStatus.CONFLICT,`
+- `private RepairNotice getByIdRequired(Long id) {`
+- `throw new ServiceException("返修通知单不存在");`
+- `private LambdaQueryWrapper<RepairNotice> buildQueryWrapper(RepairNoticeBo bo) {`
+- `private String generateNoticeNo() {`
 ```
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java
 ```
-package com.ruoyi.wms.service;
+## File: ReceiptOrderService.java (328 lines, 13KB)
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Assert;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.common.core.constant.HttpStatus;
-import com.ruoyi.common.core.constant.ServiceConstants;
-import com.ruoyi.common.core.exception.ServiceException;
-import com.ruoyi.common.core.exception.base.BaseException;
-import com.ruoyi.common.core.utils.MapstructUtils;
-import com.ruoyi.common.core.utils.StringUtils;
-import com.ruoyi.common.mybatis.core.domain.BaseEntity;
-import com.ruoyi.common.mybatis.core.page.PageQuery;
-import com.ruoyi.common.mybatis.core.page.TableDataInfo;
-import com.ruoyi.common.satoken.utils.LoginHelper;
-import com.ruoyi.wms.domain.bo.ReceiptOrderBo;
-import com.ruoyi.wms.domain.bo.ReceiptOrderDetailBo;
-import com.ruoyi.wms.domain.entity.ReceiptOrder;
-import com.ruoyi.wms.domain.entity.ReceiptOrderDetail;
-import com.ruoyi.wms.domain.entity.RepairNotice;
-import com.ruoyi.wms.domain.vo.ReceiptOrderDetailVo;
-import com.ruoyi.wms.domain.vo.ReceiptOrderVo;
-import com.ruoyi.wms.mapper.ReceiptOrderMapper;
-import com.ruoyi.wms.mapper.RepairNoticeMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+**Package**: package com.ruoyi.wms.service;
+**Imports**: 32 packages
 
-import java.util.*;
-import java.util.stream.Collectors;
+### Classes/Interfaces (1)
+- `public class ReceiptOrderService {`
 
-/**
- * 入库单Service业务层处理
- *
- * @author zcc
- * @date 2024-07-19
- */
-@RequiredArgsConstructor
-@Service
-public class ReceiptOrderService {
+### Constants/Fields
+private static final Long REPAIR_RECEIPT_OPT_TYPE = 1L;
 
-    private final ReceiptOrderMapper receiptOrderMapper;
-    private final ReceiptOrderDetailService receiptOrderDetailService;
-    private final InventoryService inventoryService;
-    private final InventoryHistoryService inventoryHistoryService;
-    private final ItemSkuService itemSkuService;
-    private final RepairNoticeMapper repairNoticeMapper;
-    private final RepairNoticeDetailService repairNoticeDetailService;
-    private static final Long REPAIR_RECEIPT_OPT_TYPE = 1L;
-
-    /**
-     * 查询入库单
-     */
-    public ReceiptOrderVo queryById(Long id){
-        ReceiptOrderVo receiptOrderVo = receiptOrderMapper.selectVoById(id);
-        Assert.notNull(receiptOrderVo, "入库单不存在");
-        receiptOrderVo.setDetails(receiptOrderDetailService.queryByReceiptOrderId(id));
-        return receiptOrderVo;
-    }
-
-    public Long queryIdByOrderNo(String orderNo){
-        ReceiptOrderVo receiptOrderVo = receiptOrderMapper.selectVoOne(new QueryWrapper<ReceiptOrder>().eq("order_no",orderNo));
-        return receiptOrderVo != null ? receiptOrderVo.getId() : null;
-    }
-
-    /**
-     * 查询入库单列表
-     */
-    public TableDataInfo<ReceiptOrderVo> queryPageList(ReceiptOrderB
+### Methods (29)
+- `public ReceiptOrderVo queryById(Long id){`
+- `public Long queryIdByOrderNo(String orderNo){`
+- `public TableDataInfo<ReceiptOrderVo> queryPageList(ReceiptOrderBo bo, PageQuery pageQuery) {`
+- `public List<ReceiptOrderVo> queryList(ReceiptOrderBo bo) {`
+- `private LambdaQueryWrapper<ReceiptOrder> buildQueryWrapper(ReceiptOrderBo bo) {`
+- `public Long insertByBo(ReceiptOrderBo bo) {`
+- `public void receive(ReceiptOrderBo bo) {`
+- `private void validateBeforeReceive(ReceiptOrderBo bo) {`
+- `throw new BaseException("商品明细不能为空");`
+- `public void updateByBo(ReceiptOrderBo bo) {`
+- `public void editToInvalid(Long id) {`
+- `public void deleteById(Long id) {`
+- `private void validateIdBeforeDelete(Long id) {`
+- `throw new ServiceException("删除失败", HttpStatus.CONFLICT,"入库单【" + receiptOrderVo.getOrderNo() + "】已入库，无法删除！");`
+- `public void deleteByIds(Collection<Long> ids) {`
+- `public void validateReceiptOrderNo(String receiptOrderNo) {`
+- `private boolean isRepairReceipt(ReceiptOrderBo bo) {`
+- `private void validateDuplicateSkuInDetails(List<ReceiptOrderDetailBo> details) {`
+- `throw new ServiceException("商品明细必须包含skuId");`
+- `throw new ServiceException("同一单据不允许重复选择同一物品");`
+- `private void validateRepairReceiptDetails(ReceiptOrderBo bo) {`
+- `throw new ServiceException("返修入库必须选择返修通知单");`
+- `throw new ServiceException("返修通知单不存在");`
+- `throw new ServiceException("仅已提交或处理中状态的返修通知单可用于返修入库");`
+- `throw new ServiceException("该返修通知单不属于当前机构，无法用于返修入库");`
+- `throw new ServiceException("返修通知单未关联可入库物品");`
+- `throw new ServiceException("入库物品不属于所选返修通知单");`
+- `throw new ServiceException("返修入库物品数量必须大于0");`
+- `private void autoFinishRepairNoticeIfComplete(ReceiptOrderBo bo) {`
 ```
 
 #### wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/controller/RepairNoticeController.java
@@ -409,183 +349,63 @@ public class RepairNoticeRejectBo implements Serializable {
 
 #### ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue
 ```
-<template>
-  <el-dialog
-    title="核对明细"
-    v-model="localOpen"
-    width="1000px"
-    append-to-body
-    destroy-on-close
-  >
-    <!-- 说明文字 -->
-    <div class="dialog-tip" style="font-size: 13px; color: #909399; padding: 0 4px 12px;">
-      提示：物品按规格型号分组汇总，点击行首箭头可展开查看具体物品条码。核对规格型号的预期数量与实际数量是否一致。
-    </div>
-    <div v-if="checkDetail" class="check-detail-wrapper">
-      <el-descriptions :column="2" border size="small" class="mb16">
-        <el-descriptions-item label="返修通知单号">{{ checkDetail.noticeNo }}</el-descriptions-item>
-        <el-descriptions-item label="状态">处理中</el-descriptions-item>
-      </el-descriptions>
+## File: RepairNoticeCheckDialog.vue (624 lines, 17KB)
 
-      <el-form ref="checkFzormRef" :model="checkForm" label-width="80px">
-        <el-form-item label="入库仓库" prop="warehouseId" :rules="[{ required: true, message: '请选择入库仓库', trigger: 'change' }]">
-          <el-select v-model="checkForm.warehouseId" placeholder="请选择入库仓库" filterable style="width: 300px">
-            <el-option
-              v-for="item in warehouseList"
-              :key="item.id"
-              :label="item.warehouseName"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-
-      <!-- 空状态提示：无可核对的物品明细 -->
-      <el-empty v-if="groupedDetails.length === 0" description="该通知单无可核对的物品明细" />
-      
-      <!-- 按规格型号分组的汇总表格 -->
-      <template v-else>
-      <el-table :data="groupedDetails" border size="small" row-key="skuName">
-        <el-table-column type="expand" width="50">
-          <template #default="{ row }">
-            <div class="detail-sub-table-wrapper">
-              <el-table
-                :data="paginatedItems(row)"
-                border
-                size="small"
-                :show-header="true"
-                style="width: 100%"
-              >
-                <el-table-column label="序号" type="index" width="60" align="center"/>
-                <el-table-column prop="barcode" label="条码" min-width="160"/>
-                <el-table-column prop="expectedQuantity" label="预期数量" width="90" align="center"/>
-                <el-table-column label="实际数量" width="130" align="center">
-                  <template #default="{ row: item }">
-                    <el-input-number
-                      v-model="item.actualQuantity"
-                      :min="0"
-                      :controls="false"
-                      size="small"
-                      style="width: 90px"
-                      @change="onQuantityChange(item, row)"
-                    />
-                  </template>
-                </el-table-column>
-                <el-table-column label="匹配" width="80" align="center">
-                  <template #default="{ row: item }">
-                    <el-tag v-if="item.matched" type="success" size="small">一致</el-tag>
-                    <el-tag v-else type="danger" size="small">不一致</el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <!-- 分页：子表明细超过 200 条时启用 -->
-              <div v-if="r
+### Component Structure
+- `<template>` (25 lines)
+- `<template>` (43 lines)
+- `<template>` (44 lines)
+- `<template>` (52 lines)
+- `<template>` (59 lines)
+- `<template>` (59 lines)
+- `<template>` (60 lines)
+- `<template>` (61 lines)
+- `<template>` (62 lines)
+- `<template>` (69 lines)
+- `<template>` (78 lines)
+- `<template>` (78 lines)
+- `<template>` (102 lines)
+- `<template>` (102 lines)
+- `<script>` (293 lines)
+- `<style>` (79 lines)
 ```
 
 #### ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js
 ```
-import { reactive, ref, toRefs } from "vue";
-import {
-  listNotice,
-  getNotice,
-  delNotice,
-  saveDraftNotice,
-  submitRepairNotice,
-  startProcessNotice,
-  confirmCheck,
-  rejectCheck
-} from "@/api/wms/repairNotice";
+## File: useRepairNotice.js (512 lines, 14KB)
 
-import useUserStore from "@/store/modules/user";
+**Imports**: 3 modules
+**Exports**: 1 items
 
-const userStore = useUserStore();
-
-function normalizeFaultyDetail(detail = {}, index = 0) {
-  const itemInfo = detail.item || {};
-  const skuInfo = detail.itemSku || {};
-  const itemId = detail.itemId ?? detail.id ?? itemInfo.id ?? null;
-  const itemCode = detail.itemCode ?? itemInfo.itemCode ?? "";
-  const itemName = detail.itemName ?? itemInfo.itemName ?? "";
-  const itemCategory = detail.itemCategory ?? itemInfo.itemCategory ?? null;
-  const itemCategoryName = detail.itemCategoryName ?? detail.faultyDeviceTypeName ?? "";
-  const itemBrand = detail.itemBrand ?? itemInfo.itemBrand ?? null;
-  const itemBrandName = detail.itemBrandName ?? "";
-  const skuId = detail.skuId ?? skuInfo.id ?? detail.id ?? null;
-  const skuName = detail.skuName ?? skuInfo.skuName ?? "";
-  const skuCode = detail.skuCode ?? skuInfo.skuCode ?? "";
-  const barcode = detail.barcode ?? skuInfo.barcode ?? "";
-
-  return {
-    itemId,
-    itemCode,
-    itemName,
-    itemCategory,
-    itemCategoryName,
-    itemBrand,
-    itemBrandName,
-    skuId,
-    skuName,
-    skuCode,
-    barcode,
-    _detailKey: String(skuId ?? itemId ?? skuCode ?? itemCode ?? `${index}`)
-  };
-}
-
-function normalizeFaultyDetails(formData = {}) {
-  const rawList = Array.isArray(formData.faultyDeviceDetailList)
-    ? formData.faultyDeviceDetailList
-    : [];
-
-  if (rawList.length) {
-    return rawList.map((detail, index) => normalizeFaultyDetail(detail, index));
-  }
-
-  return [];
-}
-
-function buildSubmitPayload(formData = {}) {
-  const details = normalizeFaultyDetails(formData);
-  const relationDetails = details
-    .map((detail) => ({ skuId: detail.skuId ?? null }))
-    .filter((detail) => detail.skuId);
-
-  return {
-    ...formData,
-    repairContactId: null,
-    returnContactId: null,
-    faultyDeviceDetailList: relationDetails
-  };
-}
-
-export default function useRepairNotice(proxy) {
-  const open = ref(false);
-  const title = ref("");
-  const loading = ref(false);
-  const buttonLoading = ref(false);
-  const showSearch = ref(true);
-  const total = ref(0);
-  const noticeList = ref([]);
-  const listRequestSeq = ref(0);
-  const checkDialogOpen = ref(false);
-  const checkDetailData = ref(null);
-  const currentNoticeId = ref(null);
-
-  const data = reactive({
-    queryParams: {
-      pageNum: 1,
-      pageSize: 10,
-      noticeNo: undefined,
-      projectPackageCode: undefined,
-      applicantName: undefined,
-      logisticsNo: undefined,
-      sendRepairDate: undefined,
-      shippedDate: undefined,
-      handoverStatus: undefined,
-      status: undefined
-    },
-    form: {},
-    rules: {
-      deviceSource: [{ required: true, message: "设备来源不能为空", trigger: "change" }],
-      applicantId: [{ required: true, message: "送修人ID不能为空", trigger: "blur" }],
-  
+### Functions (32)
+- `function normalizeFaultyDetail(detail = {}, index = 0) {`
+- `function normalizeFaultyDetails(formData = {}) {`
+- `function buildSubmitPayload(formData = {}) {`
+- `function normalizePageParams(pageInfo = {}) {`
+- `function getList() {`
+- `function resetFormData() {`
+- `function cancel() {`
+- `function handleQuery(nextQuery = {}) {`
+- `function handlePageChange(pageInfo = {}) {`
+- `function resetQuery() {`
+- `function handleAdd() {`
+- `function handleUpdate(row) {`
+- `function handleView(row) {`
+- `function handleDelete(row) {`
+- `function handleExport() {`
+- `function isDraftStatus(status) {`
+- `function isSubmittedStatus(status) {`
+- `function isProcessingStatus(status) {`
+- `function isFinishedStatus(status) {`
+- `function isApplicant(row) {`
+- `function isHandlerDeptUser(row) {`
+- `function canEdit(row) {`
+- `function canDelete(row) {`
+- `function canSubmit(row) {`
+- `function canStartProcess(row) {`
+- `function validateForDraft(formRef, callback) {`
+- `function validateForSubmit(formRef, callback) {`
+- `function saveDraft({ formRef, formData }) {`
+- `function submitProcess({ formRef, formData }) {`
+- `function handleStartProcess(row) {`
 ```
