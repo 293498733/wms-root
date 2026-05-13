@@ -24,12 +24,14 @@
     "notes": null
   },
   "task-frontend-check-dialog": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-13T12:03:38.059163",
-    "completed_at": null,
+    "completed_at": "2026-05-13T12:05:10.686770",
     "retries": 1,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "0c4170d0",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue"
+    ],
     "error_message": "goose exit -1: Process killed by watchdog after 1800s",
     "notes": null
   },
@@ -56,18 +58,20 @@
     "notes": null
   },
   "task-backend-repair-notice-query-methods": {
-    "status": "pending",
-    "started_at": null,
-    "completed_at": null,
+    "status": "completed",
+    "started_at": "2026-05-13T12:05:11.345207",
+    "completed_at": "2026-05-13T12:07:36.650456",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "",
+    "output_files_produced": [
+      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-backend-compile-test": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-13T12:07:37.115164",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
