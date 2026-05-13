@@ -12,23 +12,25 @@
     "notes": null
   },
   "task-backend-repair-notice-service": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-13T11:29:44.903207",
-    "completed_at": null,
+    "completed_at": "2026-05-13T11:32:44.742727",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "c3182607",
+    "output_files_produced": [
+      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-frontend-check-dialog": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-13T12:03:38.059163",
     "completed_at": null,
-    "retries": 0,
+    "retries": 1,
     "commit_hash": null,
     "output_files_produced": [],
-    "error_message": null,
+    "error_message": "goose exit -1: Process killed by watchdog after 1800s",
     "notes": null
   },
   "task-frontend-index-page": {
@@ -42,12 +44,14 @@
     "notes": null
   },
   "task-backend-fix-receipt-quantity": {
-    "status": "pending",
-    "started_at": null,
-    "completed_at": null,
+    "status": "completed",
+    "started_at": "2026-05-13T12:02:56.349412",
+    "completed_at": "2026-05-13T12:03:37.678715",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "",
+    "output_files_produced": [
+      "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java"
+    ],
     "error_message": null,
     "notes": null
   },
