@@ -60,12 +60,14 @@
     "notes": null
   },
   "task-frontend-returnnotice-layout": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-15T10:21:47.991467",
-    "completed_at": null,
+    "completed_at": "2026-05-15T10:22:39.151281",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "1339c7ec",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeDialog.vue"
+    ],
     "error_message": null,
     "notes": null
   },

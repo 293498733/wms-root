@@ -44,3 +44,4 @@
 10:21:47 [WARNING] Working tree is dirty, creating auto-stash
 10:21:47 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40 -q
 10:21:48 [WARNING] Working tree is dirty, creating auto-stash
+10:21:48 [INFO ] task: goose run --recipe task-template.yaml --max-turns 25 -q

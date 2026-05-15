@@ -30,3 +30,23 @@
 
 ---
 
+### [task-frontend-returnnotice-layout] 前端：ReturnNoticeDialog.vue 表单栅格布局优化
+**Category**: frontend | **Time**: 2026-05-15 10:22
+
+*From `ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeDialog.vue`:*
+- - 弹窗宽度从 1100px 改为 960px，与 ItemQrGenerateDialog 弹窗宽度一致，统一视觉风格
+- - 960px 在 1366px 分辨率下（减去侧边栏约 220px 后剩余 1140px）居中展示，两侧各有约 90px 边距
+- - 仅修改 `<el-dialog>` 的 width 属性，其他属性（append-to-body、destroy-on-close、class）及所有业务逻辑保持不变
+- - 表单栅格布局优化：在 960px 弹窗宽度下调整 el-col :span 值，使表单布局更紧凑合理
+- - Row 1（返回单号+单据状态+总数量）：span 从 11+6+6 调整为 8+5+5（合计 18），靠左排列留空 6 格，减少浪费
+- - Row 2（关联返修通知单+出库仓库）：span 从 11+6 调整为 10+8（合计 18），扩大选择区域，减少右侧空白
+- - Row 3（物流公司+物流单号）：span 保持 8+8 不变
+- - Row 4（备注）：span 从 11 调整为 16，使 textarea 宽度与上方字段对齐
+- - 仅修改 el-col 的 :span 属性值，不增删 el-col 元素，不改 el-form-item 内部结构和 CSS 样式
+- - 明细表格列宽调整：SKU编码 min-width: 140→120，SKU名称 min-width: 180→150，可返回数量 width: 120→100，本次返回数量 width: 180→140
+- - 调整后各列宽度合计 60(#)+120+150+100+140=570px，在 960px 弹窗（减去 padding 约 48px = 912px 可用）中留出约 342px 弹性空间，不会出现水平滚动条
+- - 仅修改 el-table-column 的 width/min-width 属性值，保留 show-overflow-tooltip、align、template 插槽等原有属性不变
+- - el-input-number 的 style="width: 140px" 保持不变，不影响本次返回数量列的输入组件样式
+
+---
+
