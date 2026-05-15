@@ -72,18 +72,20 @@
     "notes": null
   },
   "task-frontend-returnnotice-table-width": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-15T10:21:48.492147",
-    "completed_at": null,
+    "completed_at": "2026-05-15T10:22:59.318701",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "a692e0ab",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeDialog.vue"
+    ],
     "error_message": null,
     "notes": null
   },
   "task-verify-integration": {
-    "status": "pending",
-    "started_at": null,
+    "status": "in_progress",
+    "started_at": "2026-05-15T10:23:00.080480",
     "completed_at": null,
     "retries": 0,
     "commit_hash": null,
