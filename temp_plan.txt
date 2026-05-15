@@ -1,0 +1,1083 @@
+# 工程方案：返修通知单核对明细 UI 优化 & 扩展模块完整开发
+
+> 文档版本：v1.0
+> 编制日期：2026-05-14
+> 项目：进销存 WMS（RuoYi-Vue-Plus v5.2.0）
+> 基于：精炼需求 + 需求分析报告(02-analysis.md) + 实际代码仓库现状
+
+---
+
+## 重要差异声明（实际代码与需求分析不一致之处）
+
+经实际代码审查，以下需求分析中的描述与代码现状不一致，本方案以实际代码为准：
+
+| 条目 | 需求分析描述 | 实际代码现状 |
+|------|-------------|-------------|
+| A-01 | ref 拼写错误（`checkFzormRef`） | 实际代码中第 19 行和第 71 行已为 `checkFormRef`，已修复 ✅ |
+| A-02/A-03 | `repair_notice_detail` 表存在 `quantity` 字段，预期数量硬编码 Bug | `repair_notice_detail` 表仅 `id, notice_id, sku_id` 三列，无 `quantity` 字段。`(notice_id, sku_id)` 唯一约束，每个 SKU 在通知单中隐式数量为 1。**当前 `1L` 硬编码是符合设计的正确行为，无需修复。** |
+| C-04 字典类型名 | VO 中 `repair_logistics_order_status` 需改为 SQL 中的 `repair_logistics_status` | VO 中确实是 `repair_logistics_order_status`，SQL 中为 `repair_logistics_status`。**需统一为 `repair_logistics_status`（以 SQL 脚本为准）。** |
+
+---
+
+## 1. 架构设计
+
+### 1.1 涉及的模块
+
+| 模块 | 模块路径 | 影响类型 | 说明 |
+|------|---------|---------|------|
+| **模块 A** - 核对明细 UI 优化 | | | |
+| 前端：RepairNoticeCheckDialog.vue | `ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/` | **代码审查** | ref 拼写已修复（`checkFormRef`），API 数据源确认 `expectedQuantity`=1 是业务正确的，无需修改代码 |
+| 后端：RepairNoticeService | `wms-ruoyi-master/ruoyi-admin-wms/.../service/` | **代码审查** | `buildCheckDetail()` 中 `expectedQuantity`=1L 和 `confirmCheck()` 中 `BigDecimal.ONE` 均为符合表结构的正确行为，无需修改 |
+| **模块 B** - 返回确认单前端完善 | | | |
+| 前端：returnNotice 页面 | `src/views/wms/order/returnNotice/` | **代码审查 + SQL 执行确认** | 代码已完整实现，仅需确认数据库端 SQL 已执行 |
+| 后端：ReturnNoticeController/Service | 后端对应包 | **代码审查** | 完整实现，无需修改 |
+| SQL：菜单/字典/建表 | `script/sql/20260512_*.sql` | **需确认执行** | 共 4 个迁移脚本需确认已执行 |
+| **模块 C** - 返修物流单完整开发 | | | |
+| 后端：Mapper/Service/Controller | 需新建 7 个文件 | **全新开发** | Mapper 接口+XML、Service 接口+实现、Controller |
+| 前端：页面+API | 需新建 5 个文件 | **全新开发** | API 文件、列表页、编辑页、组合式逻辑 |
+| SQL：表/字典/菜单 | `script/sql/20260512_*.sql` | **需确认执行** | 共 3 个迁移脚本需确认已执行 |
+| VO：字典类型修正 | `RepairLogisticsOrderVo.java` | **修改** | `repair_logistics_order_status` → `repair_logistics_status` |
+
+### 1.2 模块间调用关系
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        模块 A：核对明细                              │
+│                                                                     │
+│  前端 RepairNoticeCheckDialog.vue                                   │
+│    ↓ 调用 API                                                       │
+│   api/repairNotice.js                                               │
+│    ↓ HTTP                                                           │
+│   RepairNoticeController                                            │
+│    ↓                                                                │
+│   RepairNoticeService.buildCheckDetail() / confirmCheck()           │
+│    → ReceiptOrderService.receive() (创建入库单+增加库存)              │
+│                                                                     │
+│  [现状] 代码已全部实现且逻辑正确，仅需验证                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                     模块 B：返回确认单                                 │
+│                                                                     │
+│  前端 returnNotice/index.vue + edit.vue                             │
+│    ↓ 调用 API                                                       │
+│   api/returnNotice.js                                               │
+│    ↓ HTTP                                                           │
+│   ReturnNoticeController                                            │
+│    ↓                                                                │
+│   ReturnNoticeServiceImpl                                           │
+│    → ReceiptOrderService (通过 repairNoticeService.getReturnableSkus)│
+│    → ShipmentOrderService.shipment() (出库扣库存)                     │
+│    → ItemSkuService.batchUpdateRepairStatus() (更新SKU状态)          │
+│                                                                     │
+│  [现状] 代码已全部实现且完整，仅需确认 SQL 已执行                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                     模块 C：返修物流单（全新开发）                      │
+│                                                                     │
+│  前端 repairLogisticsOrder/index.vue + edit.vue                     │    ← 新建
+│    ↓ 调用 API                                                       │
+│   api/repairLogisticsOrder.js                                       │    ← 新建
+│    ↓ HTTP                                                           │
+│   RepairLogisticsOrderController                                    │    ← 新建
+│    ↓                                                                │
+│   RepairLogisticsOrderServiceImpl                                   │    ← 新建
+│    → RepairLogisticsOrderMapper (CRUD)                              │    ← 新建
+│    → RepairNoticeMapper (查询通知单及明细)                            │    已有
+│    → RepairNoticeDetailService (查询SKU列表/已发运数量)               │    已有
+│                                                                     │
+│  提交物流单时的核心校验/判定逻辑：                                      │
+│    ① repair_notice_id → 查询 repair_notice 状态校验                  │
+│    ② 校验明细 SKU 必须属于关联通知单                                   │
+│    ③ 每个 SKU 物流数量 ≤ (通知单明细数量基准 - 已发运数量总和)          │
+│    ④ 通过后更新 repair_logistics_order.status = "1"                 │
+│    ⑤ 汇总判定：若所有 SKU 累计物流数量 ≥ 通知单基准数量 →              │
+│       更新 repair_notice.status = "5"(已完成)                         │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.3 数据流向
+
+```
+【模块 C：物流单提交流程 - 数据流向】
+
+提交请求 → Controller → Service.submit()
+  │
+  ├─ Step 1: 校验 repair_notice 存在且状态为 "3"(处理中)
+  │    读取: repair_notice (by id)
+  │
+  ├─ Step 2: 校验明细 SKU 属于通知单
+  │    读取: repair_notice_detail (by notice_id)
+  │
+  ├─ Step 3: 校验各 SKU 数量 ≤ 可发运余量
+  │    读取: repair_notice_detail (所有SKU清单)
+  │    读取: repair_logistics_order_detail (关联repair_notice_id的所有已提交/已发运物流单的明细，按sku_id汇总quantity)
+  │    计算: 可发运余量 = 1 - 已发运数量总和  (因 repair_notice_detail 无 quantity 字段，每个 SKU 的基准量为 1)
+  │
+  ├─ Step 4: 更新物流单状态为 "1"(已提交)
+  │    写入: repair_logistics_order.status = "1"
+  │
+  └─ Step 5: 汇总判定
+       读取: repair_logistics_order_detail (按 repair_notice_id 统计所有已提交+已发运物流单的 quantity)
+       判定: 若每个 SKU 的累计物流数量 ≥ 1 → 更新 repair_notice.status = "5"
+       写入: repair_notice.status = "5"(已完成)
+```
+
+### 1.4 是否引入新依赖
+
+**否。** 项目已包含所有所需依赖（MyBatis-Plus, Hutool, MapStruct, Lombok, EasyExcel, Lock4j 等），模块 C 的新文件使用项目已有框架能力，无需新增任何 Maven/Gradle 依赖或前端 npm 包。
+
+---
+
+## 2. 接口定义
+
+### 2.1 模块 A & B — 已有接口（无需新增）
+
+模块 A 和 B 的所有接口在后端均已存在且完整实现，无需新增或修改。数据库字段分析确认各接口参数与业务逻辑正确。
+
+**关键确认：**
+- `RepairNoticeCheckDetailVo.CheckDetailItem` 中的 `expectedQuantity`=1L 和 `actualQuantity`=1L 符合 `repair_notice_detail` 表结构（无 quantity 字段），为正确业务逻辑。
+- `RepairNoticeConfirmBo.ConfirmDetail` 已有 `BigDecimal quantity` 字段，前端传入的是 `item.actualQuantity`（`<el-input-number>` 双向绑定）。`confirmCheck()` 中 `detailBo.setQuantity(BigDecimal.ONE)` 应改为 `detailBo.setQuantity(detail.getQuantity())` — **此处的确存在 Bug**，需修复。
+
+### 2.2 模块 C — 全新接口
+
+#### 接口 1：分页查询物流单列表
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/list` |
+| 方法 | GET |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:list")` |
+
+**请求参数（Query）：**
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| orderNo | String | 否 | 物流单号，模糊搜索 |
+| repairNoticeId | Long | 否 | 关联返修通知单ID |
+| status | String | 否 | 状态（字典 repair_logistics_status） |
+| logisticsCompany | String | 否 | 物流公司，模糊搜索 |
+| logisticsNo | String | 否 | 物流单号，模糊搜索 |
+| pageNum | Integer | 否 | 页码，默认 1 |
+| pageSize | Integer | 否 | 每页条数，默认 10 |
+
+**响应参数：** `TableDataInfo<RepairLogisticsOrderVo>`
+
+#### 接口 2：获取物流单详情（含明细）
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/{id}` |
+| 方法 | GET |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:query")` |
+
+**请求参数：** `@PathVariable Long id`
+
+**响应参数：** `R<RepairLogisticsOrderVo>`
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | Long | 主键 |
+| orderNo | String | 物流单号 |
+| repairNoticeId | Long | 关联返修通知单ID |
+| repairNoticeNo | String | 关联返修通知单号 |
+| status | String | 状态（字典 repair_logistics_status） |
+| totalQuantity | BigDecimal | 总数量 |
+| logisticsCompany | String | 物流公司 |
+| logisticsNo | String | 物流单号 |
+| remark | String | 备注 |
+| createBy | String | 创建人 |
+| createTime | LocalDateTime | 创建时间 |
+| updateBy | String | 更新人 |
+| updateTime | LocalDateTime | 更新时间 |
+| details | List\<RepairLogisticsOrderDetailVo\> | 明细列表 |
+
+#### 接口 3：新增物流单（保存草稿）
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder` |
+| 方法 | POST |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:add")` |
+| 注解 | `@RepeatSubmit()` |
+
+**请求体（JSON）：** `RepairLogisticsOrderBo`
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| repairNoticeId | Long | 是 | 关联返修通知单ID |
+| logisticsCompany | String | 否 | 物流公司 |
+| logisticsNo | String | 否 | 物流单号 |
+| remark | String | 否 | 备注 |
+| details | List\<RepairLogisticsOrderDetailBo\> | 是 | 明细列表，至少一条 |
+| details[].skuId | Long | 是 | SKU ID |
+| details[].skuName | String | 否 | 规格型号（冗余） |
+| details[].quantity | BigDecimal | 是 | 物流数量，>0 |
+| details[].remark | String | 否 | 明细备注 |
+
+**响应参数：** `R<Long>`（新增的物流单 ID）
+
+#### 接口 4：编辑物流单（草稿状态）
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder` |
+| 方法 | PUT |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:edit")` |
+| 注解 | `@RepeatSubmit()` |
+
+**请求体（JSON）：** `RepairLogisticsOrderBo`（同上，增加 id 必填）
+
+**响应参数：** `R<Void>`
+
+#### 接口 5：删除物流单
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/{ids}` |
+| 方法 | DELETE |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:remove")` |
+
+**请求参数：** `@PathVariable Long[] ids`
+
+**响应参数：** `R<Void>`
+
+#### 接口 6：提交物流单
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/submit` |
+| 方法 | POST |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:edit")` |
+| 注解 | `@RepeatSubmit()` |
+
+**请求体（JSON）：** `RepairLogisticsOrderBo`（id 必填）
+
+**后端校验逻辑：**
+1. 物流单必须存在且状态为 "0"(草稿)
+2. 关联的返修通知单必须存在且状态 = "3"(处理中)
+3. 明细 SKU 必须全部属于关联的返修通知单
+4. 每个 SKU 的 quantity ≤ (1 - 该 SKU 在所有已提交/已发运物流单中的累计 quantity)
+   - 说明：因 `repair_notice_detail` 无 quantity 字段，每个 SKU 在通知单中的基准量为隐式 1
+5. 通过后 status → "1"(已提交)
+6. 触发汇总判定（见下）
+
+**响应参数：** `R<Void>`
+
+#### 接口 7：发运物流单
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/ship/{id}` |
+| 方法 | POST |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:edit")` |
+| 注解 | `@RepeatSubmit()` |
+
+**请求参数：** `@PathVariable Long id`
+
+**后端逻辑：**
+1. 物流单必须存在且状态 = "1"(已提交)
+2. status → "2"(已发运)
+
+**响应参数：** `R<Void>`
+
+#### 接口 8：导出物流单
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/export` |
+| 方法 | POST |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:export")` |
+
+**请求参数（Query）：** 同分页查询参数（不含分页）
+**响应参数：** Excel 文件下载
+
+#### 接口 9：查询可发运 SKU 列表
+
+| 项目 | 值 |
+|------|-----|
+| 路径 | `/wms/RepairLogisticsOrder/shippableSkus/{repairNoticeId}` |
+| 方法 | GET |
+| 权限 | `@SaCheckPermission("wms:repairLogisticsOrder:add")` |
+
+**请求参数：** `@PathVariable Long repairNoticeId`
+
+**响应参数：** `R<List<ShippableSkuVo>>`
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| skuId | Long | SKU ID |
+| skuName | String | 规格型号 |
+| itemName | String | 物品名称 |
+| totalNeed | BigDecimal | 通知单应发数（固定为 1） |
+| alreadyShipped | BigDecimal | 已发运数量合计 |
+| shippable | BigDecimal | 可发运余量（= 1 - alreadyShipped） |
+
+**注意：** 此接口为参考 `ReturnNoticeController.returnableSkus()` 模式新增。
+
+### 2.3 汇总判定逻辑（接口 6 的附加逻辑）
+
+提交物流单后，执行以下步骤：
+
+```
+boolean allComplete = true;
+for each skuId in 通知单的所有SKU:
+    totalShipped = SUM(repair_logistics_order_detail.quantity)
+                   JOIN repair_logistics_order
+                   WHERE repair_logistics_order.repair_notice_id = ?
+                     AND repair_logistics_order.status IN ('1','2')
+                     AND repair_logistics_order.del_flag = '0'
+                     AND detail.sku_id = ?
+    if (totalShipped < 1):
+        allComplete = false;
+        break;
+
+if (allComplete):
+    UPDATE repair_notice SET status = '5' WHERE id = ?;
+```
+
+### 2.4 错误码一览
+
+所有错误均由 `ServiceException` 抛出，前端根据 `R<Void>.msg` 展示错误消息。无独立 HTTP 错误码体系。
+
+| 场景 | 错误消息 |
+|------|---------|
+| 物流单不存在 | "物流单不存在" |
+| 状态不允许编辑 | "当前单据状态不允许编辑" |
+| 状态不允许提交 | "仅草稿状态的物流单才能提交" |
+| 明细为空 | "明细不能为空" |
+| 返修通知单不存在 | "关联的返修通知单不存在" |
+| 通知单状态不对 | "返修通知单状态需为处理中" |
+| SKU 不属于通知单 | "SKU(ID={})不在该返修通知单的关联SKU列表中" |
+| 数量超余量 | "SKU({})发运数量({})超过可发运余量({})" |
+| 状态不允许发运 | "仅已提交状态的物流单才能发运" |
+
+---
+
+## 3. 数据模型
+
+### 3.1 新增/修改的表结构
+
+#### 模块 C — 表 `repair_logistics_order`（若未执行）
+
+```sql
+CREATE TABLE `repair_logistics_order` (
+  `id`                bigint(20)    NOT NULL AUTO_INCREMENT  COMMENT '主键ID',
+  `order_no`          varchar(64)   NOT NULL                 COMMENT '物流单号（前缀 WLD）',
+  `repair_notice_id`  bigint(20)    NOT NULL                 COMMENT '关联返修通知单ID',
+  `status`            varchar(2)    NOT NULL DEFAULT '0'     COMMENT '状态：0草稿 1已提交 2已发运 9作废',
+  `total_quantity`    decimal(10,2) DEFAULT NULL             COMMENT '总物流数量',
+  `logistics_company` varchar(100)  DEFAULT NULL             COMMENT '物流公司',
+  `logistics_no`      varchar(64)   DEFAULT NULL             COMMENT '物流公司单号',
+  `remark`            varchar(500)  DEFAULT NULL             COMMENT '备注',
+  `del_flag`          varchar(2)    DEFAULT '0'              COMMENT '删除标志(0正常 2已删除)',
+  `create_by`         varchar(64)   DEFAULT NULL             COMMENT '创建者',
+  `create_time`       datetime(3)   DEFAULT NULL             COMMENT '创建时间',
+  `update_by`         varchar(64)   DEFAULT NULL             COMMENT '更新者',
+  `update_time`       datetime(3)   DEFAULT NULL             COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_order_no` (`order_no`) USING BTREE,
+  KEY `idx_repair_notice_id` (`repair_notice_id`) USING BTREE,
+  KEY `idx_status` (`status`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='物流单主表';
+```
+
+#### 模块 C — 表 `repair_logistics_order_detail`（若未执行）
+
+```sql
+CREATE TABLE `repair_logistics_order_detail` (
+  `id`             bigint(20)    NOT NULL AUTO_INCREMENT  COMMENT '主键',
+  `order_id`       bigint(20)    NOT NULL                 COMMENT '关联物流单主表ID',
+  `sku_id`         bigint(20)    NOT NULL                 COMMENT 'SKU ID',
+  `sku_name`       varchar(200)  DEFAULT NULL             COMMENT '规格型号/名称（冗余）',
+  `quantity`       decimal(10,2) NOT NULL                 COMMENT '物流数量',
+  `remark`         varchar(500)  DEFAULT NULL             COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_order_id` (`order_id`) USING BTREE,
+  KEY `idx_sku_id` (`sku_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='物流单明细表';
+```
+
+#### 字典数据 `repair_logistics_status`（若未执行）
+
+| dict_value | dict_label | list_class | is_default | dict_sort |
+|-----------|-----------|-----------|-----------|-----------|
+| 0 | 草稿 | info | Y | 0 |
+| 1 | 已提交 | warning | N | 1 |
+| 2 | 已发运 | success | N | 2 |
+| 9 | 作废 | danger | N | 3 |
+
+#### 菜单数据 `sys_menu`（若未执行）
+
+| menu_id | menu_name | parent_id | order_num | path | component | menu_type | perms |
+|---------|-----------|-----------|-----------|------|-----------|-----------|-------|
+| 1827000000000000001 | 物流单 | 0 | 66 | repairLogisticsOrder | wms/order/repairLogisticsOrder/index | C | wms:repairLogisticsOrder:list |
+| 1827000000000000002 | 查询 | 1827000000000000001 | 1 | # | | F | wms:repairLogisticsOrder:list |
+| 1827000000000000003 | 新增 | 1827000000000000001 | 2 | # | | F | wms:repairLogisticsOrder:add |
+| 1827000000000000004 | 修改 | 1827000000000000001 | 3 | # | | F | wms:repairLogisticsOrder:edit |
+| 1827000000000000005 | 删除 | 1827000000000000001 | 4 | # | | F | wms:repairLogisticsOrder:remove |
+| 1827000000000000006 | 导出 | 1827000000000000001 | 5 | # | | F | wms:repairLogisticsOrder:export |
+| 1827000000000000007 | 详情 | 1827000000000000001 | 6 | # | | F | wms:repairLogisticsOrder:query |
+
+### 3.2 现有表确认（模块 A/B）
+
+**`repair_notice_detail` 表结构（已确认）：**
+| 字段名 | 类型 | 约束 | 说明 |
+|--------|------|------|------|
+| id | bigint(20) | PK, AUTO_INCREMENT | 主键 |
+| notice_id | bigint(20) | NOT NULL, UK(notice_id,sku_id) | 通知单ID |
+| sku_id | bigint(20) | NOT NULL | SKU ID |
+
+- **无 `quantity` 字段**，每个 SKU 在通知单隐式出现一次，数量为 1。
+- 前端 `expectedQuantity` 固定为 1 是符合设计的正确行为。
+
+### 3.3 SQL 语句
+
+#### 执行确认 SQL（开发环境手工执行）
+
+```sql
+-- 确认 repair_logistics_order 表是否存在
+SELECT TABLE_NAME FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('repair_logistics_order','repair_logistics_order_detail');
+
+-- 确认 return_notice / return_notice_detail 表是否存在
+SELECT TABLE_NAME FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('return_notice','return_notice_detail');
+
+-- 确认 repair_logistics_status 字典是否存在
+SELECT * FROM sys_dict_type WHERE dict_type = 'repair_logistics_status';
+
+-- 确认 return_notice_status 字典是否存在
+SELECT * FROM sys_dict_type WHERE dict_type = 'return_notice_status';
+
+-- 确认物流单菜单是否存在
+SELECT * FROM sys_menu WHERE menu_id LIKE '1827%';
+
+-- 确认返回确认单菜单是否存在
+SELECT * FROM sys_menu WHERE menu_name = '返回确认单';
+
+-- 确认 repair_notice.status 全部字典值
+SELECT * FROM sys_dict_data WHERE dict_type = 'repair_notice_status' ORDER BY dict_sort;
+```
+
+#### 若表不存在，执行迁移脚本
+
+按顺序执行以下脚本（均已存放在 `wms-ruoyi-master/script/sql/`）：
+
+```bash
+# 模块 B (返回确认单):
+source 20260512_return_notice_tables.sql
+source 20260512_return_notice_dict.sql
+source 20260512_return_notice_menu.sql
+source 20260514_add_return_notice_dict.sql
+
+# 模块 C (返修物流单):
+source 20260512_repair_logistics_order_tables.sql
+source 20260512_repair_logistics_order_dict.sql
+source 20260512_repair_logistics_order_menu.sql
+```
+
+### 3.4 回滚 SQL
+
+```sql
+-- 模块 C 回滚（若需删除物流单相关对象）:
+DELETE FROM sys_menu WHERE menu_id BETWEEN 1827000000000000001 AND 1827000000000000007;
+DELETE FROM sys_dict_data WHERE dict_type = 'repair_logistics_status';
+DELETE FROM sys_dict_type WHERE dict_type = 'repair_logistics_status';
+DROP TABLE IF EXISTS repair_logistics_order_detail;
+DROP TABLE IF EXISTS repair_logistics_order;
+
+-- 模块 B 回滚（若需删除返回确认单相关对象）:
+-- 菜单回滚参考 menu.sql 文件尾部注释
+-- 字典回滚参考 dict.sql 文件尾部注释
+-- 表回滚: DROP TABLE IF EXISTS return_notice_detail; DROP TABLE IF EXISTS return_notice;
+```
+
+### 3.5 模型变更总结
+
+| 变更类型 | 变更内容 | 模块 |
+|---------|---------|------|
+| 确认建表 | `repair_notice_detail` 无 quantity 字段，隐式数量=1 | A |
+| 确认建表 | `return_notice` / `return_notice_detail` 已建表（脚本存在，需确认已执行） | B |
+| 确认建表 | `repair_logistics_order` / `repair_logistics_order_detail` 已建表（脚本存在，需确认已执行） | C |
+| 确认字典 | `return_notice_status` 字典（脚本存在，需确认已执行） | B |
+| 确认字典 | `repair_logistics_status` 字典（脚本存在，需确认已执行） | C |
+| 确认菜单 | 返回确认单菜单（脚本存在，需确认已执行） | B |
+| 确认菜单 | 物流单菜单（脚本存在，需确认已执行） | C |
+| 修改 VO 注解 | `RepairLogisticsOrderVo` 中 `dictType = "repair_logistics_order_status"` → `"repair_logistics_status"` | C |
+
+---
+
+## 4. 代码变更
+
+### 4.1 模块 A — 需修改的文件
+
+| 文件路径 | 修改内容摘要 | 修改类型 |
+|---------|-------------|---------|
+| `ruoyi-admin-wms/.../service/RepairNoticeService.java` | **第 319 行附近**：`confirmCheck()` 方法中 `detailBo.setQuantity(BigDecimal.ONE)` 改为 `detailBo.setQuantity(detail.getQuantity())`，使用用户传入的实际数量 | **Bug 修复** |
+
+**详细说明：**
+- 位置：`RepairNoticeService.confirmCheck()` 方法中构建 `ReceiptOrderDetailBo` 的位置
+- 当前代码：`detailBo.setQuantity(BigDecimal.ONE);`
+- 修改后：`detailBo.setQuantity(detail.getQuantity());`
+- `RepairNoticeConfirmBo.ConfirmDetail.quantity` 字段类型为 `BigDecimal`，前端传入的 `actualQuantity` 通过 `{ skuId, quantity: item.actualQuantity }` 传入，`@NotNull` 校验保证非空
+- 影响范围：影响返修入库单的入库数量，从固定 1 变为用户实际核对的输入值
+
+**⚠️ 注意：关于需求分析报告中提到的其他 Bug（A-02 预期数量硬编码、A-04 分组汇总未填充等）：**
+- 经代码审查确认，`repair_notice_detail` 表无 `quantity` 字段，每个 SKU 仅出现一次，所以 `expectedQuantity`=1L 和 `actualQuantity`=1L 是符合设计的正确行为 — **不是 Bug，无需修改**
+- `groupedDetails` 字段虽未填充，但需求中前端页面已无需分组展示（直接展示平铺明细），不影响功能 — **无需修改**
+
+### 4.2 模块 B — 需确认/变更的文件
+
+| 文件路径 | 操作 | 说明 |
+|---------|------|------|
+| 所有前端文件 | **无需修改** | 代码已完整实现，端到端流程需运行时验证 |
+| 所有后端文件 | **无需修改** | 完整实现 |
+| `20260512_return_notice_menu.sql` | **确认已执行** | 若未执行，手工运行 |
+| `20260512_return_notice_dict.sql` | **确认已执行** | 若未执行，手工运行 |
+| `20260512_return_notice_tables.sql` | **确认已执行** | 若未执行，手工运行 |
+| `20260514_add_return_notice_dict.sql` | **确认已执行** | 若未执行，手工运行 |
+
+### 4.3 模块 C — 需新增/修改的文件
+
+#### 4.3.1 需修改的文件（1 个）
+
+| 文件路径 | 修改内容 | 说明 |
+|---------|---------|------|
+| `ruoyi-admin-wms/.../domain/vo/RepairLogisticsOrderVo.java` | 第 42 行：`@ExcelDictFormat(dictType = "repair_logistics_order_status")` → `@ExcelDictFormat(dictType = "repair_logistics_status")` | 字典类型名与 SQL 脚本统一 |
+
+#### 4.3.2 需新增的后端文件（7 个）
+
+| # | 文件路径 | 说明 |
+|---|---------|------|
+| C-01 | `ruoyi-admin-wms/.../mapper/RepairLogisticsOrderMapper.java` | Mapper 接口 |
+| C-02 | `ruoyi-admin-wms/.../resources/mapper/wms/RepairLogisticsOrderMapper.xml` | Mapper XML |
+| C-03 | `ruoyi-admin-wms/.../mapper/RepairLogisticsOrderDetailMapper.java` | 明细 Mapper 接口 |
+| C-04 | `ruoyi-admin-wms/.../resources/mapper/wms/RepairLogisticsOrderDetailMapper.xml` | 明细 Mapper XML |
+| C-05 | `ruoyi-admin-wms/.../service/RepairLogisticsOrderService.java` | Service 接口 |
+| C-06 | `ruoyi-admin-wms/.../service/impl/RepairLogisticsOrderServiceImpl.java` | Service 实现（含 CRUD + 提交校验 + 汇总判定 + 发运） |
+| C-07 | `ruoyi-admin-wms/.../controller/RepairLogisticsOrderController.java` | Controller |
+
+**各文件详细说明：**
+
+##### C-01: RepairLogisticsOrderMapper.java
+
+```java
+package com.ruoyi.wms.mapper;
+
+import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
+import com.ruoyi.wms.domain.entity.RepairLogisticsOrder;
+import com.ruoyi.wms.domain.vo.RepairLogisticsOrderVo;
+
+/**
+ * 物流单Mapper接口
+ */
+public interface RepairLogisticsOrderMapper extends BaseMapperPlus<RepairLogisticsOrder, RepairLogisticsOrderVo> {
+
+}
+```
+
+模式：与 `ReturnNoticeMapper` 一致，继承 `BaseMapperPlus<T, TVo>`。
+
+##### C-02: RepairLogisticsOrderMapper.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wms.mapper.RepairLogisticsOrderMapper">
+
+    <resultMap id="RepairLogisticsOrderVo" type="com.ruoyi.wms.domain.vo.RepairLogisticsOrderVo">
+        <id property="id" column="id"/>
+    </resultMap>
+
+</mapper>
+```
+
+模式：与 `ReturnNoticeMapper.xml` 一致，仅定义 `resultMap`。
+
+##### C-03: RepairLogisticsOrderDetailMapper.java
+
+```java
+package com.ruoyi.wms.mapper;
+
+import com.ruoyi.common.mybatis.core.mapper.BaseMapperPlus;
+import com.ruoyi.wms.domain.entity.RepairLogisticsOrderDetail;
+import com.ruoyi.wms.domain.vo.RepairLogisticsOrderDetailVo;
+
+/**
+ * 物流单明细Mapper接口
+ */
+public interface RepairLogisticsOrderDetailMapper extends BaseMapperPlus<RepairLogisticsOrderDetail, RepairLogisticsOrderDetailVo> {
+
+}
+```
+
+##### C-04: RepairLogisticsOrderDetailMapper.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.wms.mapper.RepairLogisticsOrderDetailMapper">
+
+</mapper>
+```
+
+##### C-05: RepairLogisticsOrderService.java
+
+```java
+package com.ruoyi.wms.service;
+
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.wms.domain.bo.RepairLogisticsOrderBo;
+import com.ruoyi.wms.domain.vo.RepairLogisticsOrderVo;
+import com.ruoyi.wms.domain.vo.ShippableSkuVo;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * 物流单Service接口
+ */
+public interface RepairLogisticsOrderService {
+
+    RepairLogisticsOrderVo queryById(Long id);
+
+    TableDataInfo<RepairLogisticsOrderVo> queryPageList(RepairLogisticsOrderBo bo, PageQuery pageQuery);
+
+    Long insertByBo(RepairLogisticsOrderBo bo);
+
+    void updateByBo(RepairLogisticsOrderBo bo);
+
+    void submit(RepairLogisticsOrderBo bo);
+
+    void ship(Long id);
+
+    void deleteByIds(Collection<Long> ids);
+
+    List<ShippableSkuVo> getShippableSkus(Long repairNoticeId);
+}
+```
+
+##### C-06: RepairLogisticsOrderServiceImpl.java
+
+核心 Service 实现，需实现以下功能：
+
+**CRUD 部分：**
+- `queryById()` — 查询主表 + 关联明细 + 关联返修通知单号
+- `queryPageList()` — 分页查询（含数据权限）
+- `insertByBo()` — 新增草稿（status="0"），自动生成物流单号（`WLD` + 时间 + 序列），自动汇总 `totalQuantity`
+- `updateByBo()` — 编辑草稿（先校验状态），替换明细
+- `deleteByIds()` — 仅草稿可删除，支持批量
+- `getShippableSkus()` — 根据 repairNoticeId 查询可发运 SKU 及已发运数量
+
+**业务部分 — submit()：**
+```java
+@Transactional(rollbackFor = Exception.class)
+public void submit(RepairLogisticsOrderBo bo) {
+    // 1. 校验物流单存在且状态=草稿
+    RepairLogisticsOrder order = getByIdRequired(bo.getId());
+    if (!"0".equals(order.getStatus())) {
+        throw new ServiceException("仅草稿状态的物流单才能提交");
+    }
+    
+    // 2. 校验关联返修通知单存在且状态=处理中(3)
+    RepairNotice notice = repairNoticeMapper.selectById(order.getRepairNoticeId());
+    if (notice == null) {
+        throw new ServiceException("关联的返修通知单不存在");
+    }
+    if (!"3".equals(notice.getStatus())) {
+        throw new ServiceException("返修通知单状态需为处理中");
+    }
+    
+    // 3. 校验明细 SKU 必须属于通知单
+    Set<Long> noticeSkuIds = repairNoticeDetailService.querySkuIdSetByNoticeId(order.getRepairNoticeId());
+    // 从数据库读取最新明细
+    List<RepairLogisticsOrderDetail> details = getDetailsByOrderId(bo.getId());
+    for (RepairLogisticsOrderDetail detail : details) {
+        if (!noticeSkuIds.contains(detail.getSkuId())) {
+            throw new ServiceException("SKU(ID=" + detail.getSkuId() + ")不在该返修通知单的关联SKU列表中");
+        }
+    }
+    
+    // 4. 校验每个 SKU 数量 ≤ 可发运余量
+    //    可发运余量 = 1（通知单基准）- 已发运数量（所有已提交/已发运物流单中该 SKU 的合计）
+    Map<Long, BigDecimal> shippedMap = getShippedQuantityByNoticeId(order.getRepairNoticeId());
+    for (RepairLogisticsOrderDetail detail : details) {
+        BigDecimal alreadyShipped = shippedMap.getOrDefault(detail.getSkuId(), BigDecimal.ZERO);
+        // 包含当前物流单的修改（若 submit 中已更新明细）
+        BigDecimal shippable = BigDecimal.ONE.subtract(alreadyShipped);
+        if (detail.getQuantity().compareTo(shippable) > 0) {
+            throw new ServiceException("SKU({})发运数量({})超过可发运余量({})");
+        }
+    }
+    
+    // 5. 更新状态
+    LambdaUpdateWrapper<RepairLogisticsOrder> wrapper = Wrappers.lambdaUpdate();
+    wrapper.eq(RepairLogisticsOrder::getId, bo.getId());
+    wrapper.set(RepairLogisticsOrder::getStatus, "1");
+    repairLogisticsOrderMapper.update(null, wrapper);
+    
+    // 6. 汇总判定
+    autoCompleteRepairNoticeIfAllShipped(order.getRepairNoticeId());
+}
+```
+
+**汇总判定逻辑 — autoCompleteRepairNoticeIfAllShipped()：**
+```java
+private void autoCompleteRepairNoticeIfAllShipped(Long repairNoticeId) {
+    // 获取通知单所有 SKU
+    Set<Long> noticeSkuIds = repairNoticeDetailService.querySkuIdSetByNoticeId(repairNoticeId);
+    if (noticeSkuIds.isEmpty()) return;
+    
+    // 获取每个 SKU 的已发运总量
+    Map<Long, BigDecimal> shippedMap = getShippedQuantityByNoticeId(repairNoticeId);
+    
+    // 判定：每个 SKU 的已发运数量 ≥ 1（基准）
+    for (Long skuId : noticeSkuIds) {
+        BigDecimal shipped = shippedMap.getOrDefault(skuId, BigDecimal.ZERO);
+        if (shipped.compareTo(BigDecimal.ONE) < 0) {
+            return; // 还有未发完的 SKU
+        }
+    }
+    
+    // 全部发完，更新通知单状态
+    LambdaUpdateWrapper<RepairNotice> wrapper = Wrappers.lambdaUpdate();
+    wrapper.eq(RepairNotice::getId, repairNoticeId);
+    wrapper.set(RepairNotice::getStatus, "5");
+    repairNoticeMapper.update(null, wrapper);
+}
+```
+
+**ship() 方法：**
+```java
+@Transactional(rollbackFor = Exception.class)
+public void ship(Long id) {
+    RepairLogisticsOrder order = getByIdRequired(id);
+    if (!"1".equals(order.getStatus())) {
+        throw new ServiceException("仅已提交状态的物流单才能发运");
+    }
+    LambdaUpdateWrapper<RepairLogisticsOrder> wrapper = Wrappers.lambdaUpdate();
+    wrapper.eq(RepairLogisticsOrder::getId, id);
+    wrapper.set(RepairLogisticsOrder::getStatus, "2");
+    repairLogisticsOrderMapper.update(null, wrapper);
+}
+```
+
+##### C-07: RepairLogisticsOrderController.java
+
+```java
+package com.ruoyi.wms.controller;
+
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.ruoyi.common.core.domain.R;
+import com.ruoyi.common.core.validate.AddGroup;
+import com.ruoyi.common.core.validate.EditGroup;
+import com.ruoyi.common.idempotent.annotation.RepeatSubmit;
+import com.ruoyi.common.log.annotation.Log;
+import com.ruoyi.common.log.enums.BusinessType;
+import com.ruoyi.common.mybatis.core.page.PageQuery;
+import com.ruoyi.common.mybatis.core.page.TableDataInfo;
+import com.ruoyi.common.web.core.BaseController;
+import com.ruoyi.wms.domain.bo.RepairLogisticsOrderBo;
+import com.ruoyi.wms.domain.vo.RepairLogisticsOrderVo;
+import com.ruoyi.wms.domain.vo.ShippableSkuVo;
+import com.ruoyi.wms.service.RepairLogisticsOrderService;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Validated
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/wms/RepairLogisticsOrder")
+public class RepairLogisticsOrderController extends BaseController {
+
+    private final RepairLogisticsOrderService repairLogisticsOrderService;
+
+    @SaCheckPermission("wms:repairLogisticsOrder:list")
+    @GetMapping("/list")
+    public TableDataInfo<RepairLogisticsOrderVo> list(RepairLogisticsOrderBo bo, PageQuery pageQuery) {
+        return repairLogisticsOrderService.queryPageList(bo, pageQuery);
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:export")
+    @Log(title = "物流单", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(RepairLogisticsOrderBo bo, HttpServletResponse response) {
+        List<RepairLogisticsOrderVo> list = repairLogisticsOrderService.queryList(bo);
+        ExcelUtil.exportExcel(list, "物流单", RepairLogisticsOrderVo.class, response);
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:query")
+    @GetMapping("/{id}")
+    public R<RepairLogisticsOrderVo> getInfo(@NotNull(message = "主键不能为空") @PathVariable Long id) {
+        return R.ok(repairLogisticsOrderService.queryById(id));
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:add")
+    @Log(title = "物流单", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping()
+    public R<Long> add(@Validated(AddGroup.class) @RequestBody RepairLogisticsOrderBo bo) {
+        return R.ok(repairLogisticsOrderService.insertByBo(bo));
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:edit")
+    @Log(title = "物流单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping()
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody RepairLogisticsOrderBo bo) {
+        repairLogisticsOrderService.updateByBo(bo);
+        return R.ok();
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:remove")
+    @Log(title = "物流单", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public R<Void> remove(@NotEmpty(message = "主键不能为空") @PathVariable Long[] ids) {
+        repairLogisticsOrderService.deleteByIds(List.of(ids));
+        return R.ok();
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:edit")
+    @Log(title = "物流单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/submit")
+    public R<Void> submit(@Validated @RequestBody RepairLogisticsOrderBo bo) {
+        repairLogisticsOrderService.submit(bo);
+        return R.ok();
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:edit")
+    @Log(title = "物流单", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PostMapping("/ship/{id}")
+    public R<Void> ship(@NotNull(message = "主键不能为空") @PathVariable Long id) {
+        repairLogisticsOrderService.ship(id);
+        return R.ok();
+    }
+
+    @SaCheckPermission("wms:repairLogisticsOrder:add")
+    @GetMapping("/shippableSkus/{repairNoticeId}")
+    public R<List<ShippableSkuVo>> shippableSkus(
+            @NotNull(message = "返修通知单ID不能为空") @PathVariable Long repairNoticeId) {
+        return R.ok(repairLogisticsOrderService.getShippableSkus(repairNoticeId));
+    }
+}
+```
+
+**注意：** 需要新增 `ShippableSkuVo` 视图对象，参照 `ReturnableSkuVo` 模式。
+
+#### 4.3.3 需新增的 VO 文件（1 个）
+
+**C-08: ShippableSkuVo.java**
+
+路径：`ruoyi-admin-wms/.../domain/vo/ShippableSkuVo.java`
+
+```java
+package com.ruoyi.wms.domain.vo;
+
+import lombok.Data;
+import java.math.BigDecimal;
+
+/**
+ * 可发运SKU视图对象
+ */
+@Data
+public class ShippableSkuVo {
+    private Long skuId;
+    private String skuName;
+    private String itemName;
+    private BigDecimal totalNeed;     // 通知单基准数（固定 1）
+    private BigDecimal alreadyShipped; // 已发运数量
+    private BigDecimal shippable;     // 可发运余量
+}
+```
+
+#### 4.3.4 需新增的前端文件（5 个）
+
+| # | 文件路径 | 说明 |
+|---|---------|------|
+| C-F01 | `src/api/wms/repairLogisticsOrder.js` | API 封装 |
+| C-F02 | `src/views/wms/order/repairLogisticsOrder/index.vue` | 列表页 |
+| C-F03 | `src/views/wms/order/repairLogisticsOrder/edit.vue` | 编辑页 |
+| C-F04 | `src/views/wms/order/repairLogisticsOrder/useRepairLogisticsOrder.js` | 组合式逻辑 |
+| C-F05 | `src/views/wms/order/repairLogisticsOrder/components/RepairLogisticsOrderQuery.vue` | 查询组件 |
+
+**设计说明：**
+前端遵循 returnNotice 的模式。编辑页核心交互：
+1. 选择返修通知单 → 调用 `shippableSkus` API → 获取可发运 SKU 列表
+2. 用户填写本次发运数量（el-input-number，min=0，max=可发运数量）
+3. 明细表格列：序号 / SKU编码 / SKU名称 / 通知单基准(只读) / 已发运(只读) / 可发运(只读) / 本次发运数量(可编辑)
+4. 下方操作栏：左侧「提交」(primary) + 右侧「保存草稿」(info)+「取消」
+5. 列表页按钮：新增/编辑(草稿)/查看/删除(草稿)/提交(草稿)/发运(已提交)
+6. 路由：`/repairLogisticsOrderEdit`（新建/编辑/查看通过 query 参数区分）
+
+### 4.4 需删除的文件
+
+无。
+
+### 4.5 配置变更
+
+无。不涉及 `application.yml`、数据源、Redis 等配置变更。
+
+---
+
+## 5. 测试方案
+
+### 5.1 单元测试范围
+
+#### 模块 C — Service 层单元测试
+
+| 测试类 | 测试方法 | 验证点 |
+|--------|---------|--------|
+| `RepairLogisticsOrderServiceImpl` | `insertByBo()` | 新建草稿：状态=0，物流单号自动生成，总数量自动汇总，明细正确保存 |
+| | `updateByBo()` | 编辑草稿：状态非0时报错，明细替换正确 |
+| | `submit()` | 提交草稿：校验返修通知单是否存在、状态是否处理中；校验SKU是否属于通知单；校验数量≤可发运余量；通过后状态→1 |
+| | `submit()` | 汇总判定：当全部SKU已发运≥1时，repair_notice.status→5 |
+| | `ship()` | 发运：已提交→已发运 |
+| | `deleteByIds()` | 删除：仅草稿可删 |
+| | `queryById()` | 查询：含明细和关联通知单号 |
+| | `getShippableSkus()` | 可发运列表：正确计算已发运和余量 |
+
+#### 模块 A — Service 层单元测试
+
+| 测试类 | 测试方法 | 验证点 |
+|--------|---------|--------|
+| `RepairNoticeService` | `confirmCheck()` | **传入的 quantity 是否被正确传递到 ReceiptOrderDetailBo.quantity**（修复后的正确性验证） |
+| | `buildCheckDetail()` | expectedQuantity 和 actualQuantity 均为 1（确认业务正确性） |
+
+### 5.2 集成测试范围
+
+| 测试场景 | 步骤 | 预期结果 |
+|---------|------|---------|
+| **模块 C 全流程** | ① 新建物流单(草稿) → ② 编辑 → ③ 提交 → ④ 发运 | ① 草稿状态，明细正确；② 编辑后保存；③ 提交后状态=1，校验通过；④ 发运后状态=2 |
+| **模块 C 校验失败** | ① 选择未处理中的通知单 → 提交 | 抛错"返修通知单状态需为处理中" |
+| **模块 C 数量超限** | ① 同一通知单建 2 个物流单，数量都填 1 → 提交第 2 个 | 第 2 个抛错"超过可发运余量" |
+| **模块 C 汇总判定** | ① 通知单有 2 个 SKU → 建 2 个物流单各发 1 个 → 提交第 2 个 | 第 2 个提交后，repair_notice.status→5 |
+| **模块 A 核对通过** | ① 已提交通知单 → 开始处理 → 填写实际数量 → 核对无误-入库 | 入库单数量=用户填的实际数量，SKU状态→维修中 |
+| **模块 B 全流程** | ① 新建返回通知单 → 选择通知单 → 填写明细 → 保存草稿 → 编辑 → 提交 → 出库 | 完整流程：草稿→已提交→已出库，库存扣减，SKU状态→已回寄 |
+| **模块 B 菜单** | ① 登录系统 → 查看左侧菜单 → 点击"返回确认单" | 菜单可见可点击，列表页正常加载 |
+
+### 5.3 手动测试步骤
+
+#### 前提条件确认
+
+| # | 检查项 | 命令/操作 | 预期结果 |
+|---|--------|----------|---------|
+| 0.1 | 数据库执行 | 执行 3.3 节确认 SQL | 所有表、字典、菜单均存在 |
+| 0.2 | 后端编译 | `mvn -DskipTests compile` 在 wms-ruoyi-master 目录 | BUILD SUCCESS |
+| 0.3 | 前端构建 | `npm run build:prod` 在 ruo-yi-wms-vue-master 目录 | 构建成功 |
+| 0.4 | 运行环境 | 启动后端 + 前端 dev 服务器 | 系统正常运行 |
+
+#### 模块 A：核对明细回归测试
+
+| # | 步骤 | 预期结果 |
+|---|------|---------|
+| A.1 | 进入「返修通知单」列表，找到状态=已提交(2)的单据，点击「开始处理」 | 弹出核对明细弹窗，展示明细列表，每个 SKU 预期数量=1，实际数量默认=1 |
+| A.2 | 不选择仓库，直接点击「核对无误-入库」 | 弹出"请选择入库仓库"校验提示 |
+| A.3 | 选择仓库，修改实际数量为 0，点击「核对无误-入库」 | 弹出二次确认"存在数量不一致的物品，确认仍要入库吗？" |
+| A.4 | 确认二次确认 → 调用 confirmCheck 接口 | 接口调用成功，入库单创建，入库数量=0（用户输入值） |
+| A.5 | 点击「核对有误-退回」，不输入原因直接确认 | 提交按钮禁用（或输入校验不通过） |
+| A.6 | 输入退回原因，确认 | 调用 rejectCheck 接口，状态变为"待提交" |
+
+#### 模块 B：返回确认单前端验证
+
+| # | 步骤 | 预期结果 |
+|---|------|---------|
+| B.1 | 登录系统，查看左侧菜单 | 「返回确认单」菜单在"单据管理"下可见 |
+| B.2 | 点击「返回确认单」菜单 | 列表页打开，分页正常 |
+| B.3 | 点击「新增」按钮 | 跳转编辑页，返回单号自动生成（FK前缀） |
+| B.4 | 选择返修通知单（弹窗搜索，仅显示处理中的通知单） | 选择后自动加载可返回 SKU 列表 |
+| B.5 | 填写仓库、明细数量、物流信息，点击「保存草稿」 | 保存成功，跳转列表，状态=草稿(0) |
+| B.6 | 点击该单据的「编辑」按钮 | 进入编辑页，数据回填正确 |
+| B.7 | 修改数量，点击「提交」 | 提交成功，状态=已提交(2) |
+| B.8 | 点击「出库」按钮 | 出库成功，状态=已出库(3)，库存扣减 |
+| B.9 | 查看返修通知单详情 | 若全部SKU已返回，状态变为已回寄(4) |
+
+#### 模块 C：返修物流单完整测试
+
+| # | 步骤 | 预期结果 |
+|---|------|---------|
+| C.1 | 登录系统，查看左侧菜单 | 「物流单」菜单在"单据管理"下可见 |
+| C.2 | 点击「物流单」菜单 | 列表页打开，分页正常 |
+| C.3 | 点击「新增」按钮 | 跳转编辑页，物流单号自动生成（WLD前缀） |
+| C.4 | 选择返修通知单 | 自动加载可发运 SKU 列表，展示通知单基准(1)/已发运/可发运 |
+| C.5 | 填写本次发运数量（≤可发运），填写物流公司/单号 | 数据输入正常 |
+| C.6 | 点击「保存草稿」 | 保存成功，状态=草稿(0) |
+| C.7 | 点击「提交」 | 提交成功，状态=已提交(1) |
+| C.8 | 点击「发运」按钮 | 发运成功，状态=已发运(2) |
+| C.9 | 同一通知单下再次建物流单，发运剩余 SKU | 可发运正确计算余量 |
+| C.10 | 全部 SKU 发完后提交 | 自动更新通知单状态为已完成(5) |
+| C.11 | 验证校验逻辑：选无效通知单 / 数量超限 / 状态不对 | 均抛出友好错误提示 |
+
+#### 回归验证
+
+| # | 验证项 | 方法 |
+|---|--------|------|
+| R.1 | 现有返修通知单列表/详情/开始处理功能不受影响 | 执行 A.1~A.6 后，确认其他返修通知单正常 |
+| R.2 | 现有入库单/出库单/盘点单功能不受影响 | 快速浏览各模块列表页打开正常 |
+| R.3 | 后端编译 | `mvn -DskipTests compile` |
+| R.4 | 前端构建 | `npm run build:prod` |
+
+---
+
+## 6. 总结：开发任务清单（按执行顺序）
+
+### Phase 0：环境准备（约 0.5 天）
+
+| # | 任务 | 负责人 |
+|---|------|--------|
+| 0.1 | 确认所有 SQL 迁移脚本已执行（3.3 节确认 SQL） | DBA/开发者 |
+| 0.2 | 若未执行，手工运行所有迁移脚本 | 开发者 |
+| 0.3 | 确认 `mvn -DskipTests compile` 编译通过 | 开发者 |
+| 0.4 | 确认 `npm run build:prod` 前端构建通过 | 开发者 |
+
+### Phase 1：模块 A Bug 修复（约 0.1 天）
+
+| # | 文件 | 操作 |
+|---|------|------|
+| 1.1 | `RepairNoticeService.java` 第 319 行 | 将 `BigDecimal.ONE` 改为 `detail.getQuantity()` |
+
+### Phase 2：模块 C 后端开发（约 1-2 天）
+
+| # | 文件 | 操作 |
+|---|------|------|
+| 2.1 | `RepairLogisticsOrderVo.java` | 修改字典类型名 |
+| 2.2 | `ShippableSkuVo.java` | 新增 VO |
+| 2.3 | `RepairLogisticsOrderMapper.java` | 新建 |
+| 2.4 | `RepairLogisticsOrderDetailMapper.java` | 新建 |
+| 2.5 | `RepairLogisticsOrderMapper.xml` | 新建 |
+| 2.6 | `RepairLogisticsOrderDetailMapper.xml` | 新建 |
+| 2.7 | `RepairLogisticsOrderService.java` | 新建 |
+| 2.8 | `RepairLogisticsOrderServiceImpl.java` | 新建（核心逻辑） |
+| 2.9 | `RepairLogisticsOrderController.java` | 新建 |
+| 2.10 | 编译验证 | `mvn -DskipTests compile` |
+
+### Phase 3：模块 C 前端开发（约 1-2 天）
+
+| # | 文件 | 操作 |
+|---|------|------|
+| 3.1 | `src/api/wms/repairLogisticsOrder.js` | 新建 API 封装 |
+| 3.2 | `useRepairLogisticsOrder.js` | 新建组合式逻辑 |
+| 3.3 | `RepairLogisticsOrderQuery.vue` | 新建查询组件 |
+| 3.4 | `index.vue` | 新建列表页 |
+| 3.5 | `edit.vue` | 新建编辑页 |
+| 3.6 | 前端构建验证 | `npm run build:prod` |
+
+### Phase 4：验证与回归测试（约 0.5 天）
+
+| # | 任务 | 说明 |
+|---|------|------|
+| 4.1 | 模块 A 回归（测试步骤 A.1~A.6） | 确认 Bug 修复正确 |
+| 4.2 | 模块 B 端到端验证（测试步骤 B.1~B.9） | 确认前端功能完整 |
+| 4.3 | 模块 C 全流程验证（测试步骤 C.1~C.11） | 确认完整功能 |
+| 4.4 | 回归验证（R.1~R.4） | 确认现有功能不受影响 |
+
+### 预估总工时：**约 3-5 人天**
