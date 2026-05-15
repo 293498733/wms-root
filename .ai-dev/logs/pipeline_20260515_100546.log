@@ -1,0 +1,35 @@
+10:05:46 [INFO ] 项目: D:\MyPrj\进销存
+10:05:46 [INFO ] 项目画像不存在，将从 Phase 0 项目初始化开始
+10:05:46 [INFO ] JDK 17 detected: D:\zulu17.54.21-ca-jdk17.0.13-win_x64 (v17.0.13)
+10:05:46 [INFO ] JDK 17 detected: D:\zulu17.54.21-ca-jdk17.0.13-win_x64
+10:05:46 [INFO ] 从 Phase 0 项目初始化开始（profile.yml 不存在）
+10:05:46 [INFO ] goose run --recipe 00-init-project.yaml --max-turns 60 -q
+10:08:59 [INFO ] 项目初始化 — 完成 (3m13s)
+10:08:59 [INFO ] goose run --recipe 01-refine-requirement.yaml --max-turns 80 -q
+10:11:13 [INFO ] 需求精炼 — 完成 (2m14s)
+10:11:13 [INFO ] goose run --recipe 02-analysis.yaml --max-turns 100 -q
+10:14:18 [INFO ] 需求分析 — 完成 (3m4s)
+10:14:18 [INFO ] goose run --recipe 03-design.yaml --max-turns 120 -q
+10:17:20 [INFO ] 工程方案 — 完成 (3m1s)
+10:17:20 [INFO ] goose run --recipe 03.5-decompose.yaml --max-turns 80 -q
+10:19:20 [INFO ] 任务拆分 — 完成 (2m0s)
+10:19:20 [INFO ] JDK 17 detected: D:\zulu17.54.21-ca-jdk17.0.13-win_x64 (v17.0.13)
+10:19:20 [WARNING] Working tree is dirty, creating auto-stash
+10:19:21 [INFO ] Snapshot built: 1128 files indexed
+10:19:21 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20 -q
+10:19:45 [WARNING] Working tree is dirty, creating auto-stash
+10:19:45 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20 -q
+10:19:57 [WARNING] Working tree is dirty, creating auto-stash
+10:19:57 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40 -q
+10:20:36 [WARNING] Working tree is dirty, creating auto-stash
+10:20:36 [INFO ] task: goose run --recipe task-template.yaml --max-turns 40 -q
+10:20:54 [WARNING] Working tree is dirty, creating auto-stash
+10:20:55 [INFO ] task: goose run --recipe task-template.yaml --max-turns 35 -q
+10:20:55 [WARNING] Working tree is dirty, creating auto-stash
+10:20:55 [INFO ] task: goose run --recipe task-template.yaml --max-turns 20 -q
+10:20:55 [WARNING] Working tree is dirty, creating auto-stash
+10:20:55 [INFO ] task: goose run --recipe task-template.yaml --max-turns 25 -q
+10:21:27 [INFO ] Task task-frontend-returnnotice-dialog-width committed: d3e14a56
+10:21:33 [INFO ] Pushed to origin/refs/heads/master (branch=master)
+10:21:33 [INFO ] Snapshot built: 1128 files indexed
+10:21:33 [INFO ] Knowledge accumulated: 3 decisions from task task-frontend-returnnotice-dialog-width

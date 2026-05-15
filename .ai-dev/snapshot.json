@@ -3,47 +3,57 @@
   "files": {
     "$null": {
       "size": 1106,
-      "mtime": 1778552347.7390366,
+      "mtime": 1778729393.8408976,
+      "hash": ""
+    },
+    "_build.bat": {
+      "size": 281,
+      "mtime": 1778729970.1260104,
+      "hash": ""
+    },
+    "_build2.bat": {
+      "size": 394,
+      "mtime": 1778729983.340802,
       "hash": ""
     },
     "archive-to-svn.bat": {
-      "size": 3834,
-      "mtime": 1778313271.5153165,
+      "size": 3940,
+      "mtime": 1778729393.9269574,
       "hash": ""
     },
     "CLAUDE.md": {
-      "size": 8260,
-      "mtime": 1778293727.369468,
+      "size": 8424,
+      "mtime": 1778729393.925905,
       "hash": ""
     },
     "filelist.txt": {
       "size": 585276,
-      "mtime": 1778461552.1531272,
+      "mtime": 1778729393.9301727,
       "hash": ""
     },
     "init-zb2.sql": {
       "size": 0,
-      "mtime": 1776234427.710291,
+      "mtime": 1778729393.9301727,
       "hash": ""
     },
     "README.md": {
-      "size": 777,
-      "mtime": 1778313250.7295835,
+      "size": 809,
+      "mtime": 1778729393.9269574,
       "hash": ""
     },
     "requirement-AI.md": {
-      "size": 7225,
-      "mtime": 1778580442.292866,
+      "size": 7339,
+      "mtime": 1778811561.2386155,
       "hash": ""
     },
     "requirement.md": {
       "size": 335,
-      "mtime": 1778582406.3373175,
+      "mtime": 1778811561.2391405,
       "hash": ""
     },
     "run_mvn.bat": {
       "size": 160,
-      "mtime": 1778573355.5083275,
+      "mtime": 1778729393.9329438,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/bin/build.bat": {
@@ -344,6 +354,11 @@
     "ruo-yi-wms-vue-master/src/api/wms/repairNotice.js": {
       "size": 1944,
       "mtime": 1778225815.206438,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/api/wms/returnNotice.js": {
+      "size": 2048,
+      "mtime": 1778582570.1712866,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/api/wms/shipmentOrder.js": {
@@ -907,8 +922,8 @@
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/components/FaultyItemSelector/index.vue": {
-      "size": 19590,
-      "mtime": 1777519404.499865,
+      "size": 19905,
+      "mtime": 1778748596.6094825,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/components/FileUpload/index.vue": {
@@ -987,8 +1002,8 @@
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/components/RepairNoticeSelectDialog/index.vue": {
-      "size": 3578,
-      "mtime": 1777519404.4891193,
+      "size": 3713,
+      "mtime": 1778671477.2758992,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/components/RightToolbar/index.vue": {
@@ -1173,7 +1188,7 @@
     },
     "ruo-yi-wms-vue-master/src/router/index.js": {
       "size": 6933,
-      "mtime": 1777519404.499865,
+      "mtime": 1778752656.1177056,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/settings.js": {
@@ -1302,13 +1317,13 @@
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/components/InventorySelect.vue": {
-      "size": 6216,
-      "mtime": 1776838580.0031295,
+      "size": 8233,
+      "mtime": 1778749304.5412383,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/components/SkuSelect.vue": {
-      "size": 9043,
-      "mtime": 1777519404.485262,
+      "size": 10988,
+      "mtime": 1778749187.5932133,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/dashboard/charts.vue": {
@@ -1672,8 +1687,8 @@
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/wms/basic/item/components/ItemQrGenerateDialog.vue": {
-      "size": 11640,
-      "mtime": 1778046834.2137377,
+      "size": 13169,
+      "mtime": 1778811688.0639758,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/wms/basic/item/components/ItemQuery.vue": {
@@ -1756,6 +1771,11 @@
       "mtime": 1778119869.182369,
       "hash": ""
     },
+    "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeCheckDialog.vue": {
+      "size": 5609,
+      "mtime": 1778671477.2803323,
+      "hash": ""
+    },
     "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/components/RepairNoticeDialog.vue": {
       "size": 21017,
       "mtime": 1778148236.771471,
@@ -1772,13 +1792,43 @@
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/index.vue": {
-      "size": 2888,
-      "mtime": 1778573839.8328419,
+      "size": 2954,
+      "mtime": 1778671477.2813325,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/wms/order/repairNotice/useRepairNotice.js": {
-      "size": 14510,
-      "mtime": 1778287392.1192071,
+      "size": 15022,
+      "mtime": 1778671477.2813325,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeDialog.vue": {
+      "size": 16574,
+      "mtime": 1778811681.9560888,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeQuery.vue": {
+      "size": 3525,
+      "mtime": 1778583107.2204373,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/components/ReturnNoticeTable.vue": {
+      "size": 6723,
+      "mtime": 1778583126.1532657,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/edit.vue": {
+      "size": 17221,
+      "mtime": 1778660208.655625,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/index.vue": {
+      "size": 2312,
+      "mtime": 1778752976.4450946,
+      "hash": ""
+    },
+    "ruo-yi-wms-vue-master/src/views/wms/order/returnNotice/useReturnNotice.js": {
+      "size": 7068,
+      "mtime": 1778752952.53045,
       "hash": ""
     },
     "ruo-yi-wms-vue-master/src/views/wms/order/shipment/edit.vue": {
@@ -1828,12 +1878,22 @@
     },
     "stderr.txt": {
       "size": 168,
-      "mtime": 1778549711.5163674,
+      "mtime": 1778642917.522291,
       "hash": ""
     },
     "stdout.txt": {
       "size": 0,
-      "mtime": 1778549711.4196105,
+      "mtime": 1778642917.523301,
+      "hash": ""
+    },
+    "temp_plan.txt": {
+      "size": 50676,
+      "mtime": 1778744352.8152306,
+      "hash": ""
+    },
+    "temp_test.docx": {
+      "size": 412236,
+      "mtime": 1778572082.7171662,
       "hash": ""
     },
     "wms-ruoyi-master/docs/danshen.jpg": {
@@ -1916,14 +1976,14 @@
       "mtime": 1773967841.460265,
       "hash": ""
     },
-    "wms-ruoyi-master/logs/sys-console.2026-05-11.log": {
-      "size": 81172,
-      "mtime": 1778488098.386228,
+    "wms-ruoyi-master/logs/sys-console.2026-05-14.log": {
+      "size": 99505,
+      "mtime": 1778752660.9040751,
       "hash": ""
     },
     "wms-ruoyi-master/logs/sys-console.log": {
-      "size": 99042,
-      "mtime": 1778582409.9975624,
+      "size": 23144,
+      "mtime": 1778811023.1755927,
       "hash": ""
     },
     "wms-ruoyi-master/logs/sys-error.2026-03-20.log": {
@@ -2006,9 +2066,14 @@
       "mtime": 1778484378.192906,
       "hash": ""
     },
-    "wms-ruoyi-master/logs/sys-error.log": {
+    "wms-ruoyi-master/logs/sys-error.2026-05-12.log": {
       "size": 2379,
       "mtime": 1778579798.3611605,
+      "hash": ""
+    },
+    "wms-ruoyi-master/logs/sys-error.log": {
+      "size": 1529,
+      "mtime": 1778741900.1335304,
       "hash": ""
     },
     "wms-ruoyi-master/logs/sys-info.2026-03-20.log": {
@@ -2111,9 +2176,24 @@
       "mtime": 1778488098.386228,
       "hash": ""
     },
+    "wms-ruoyi-master/logs/sys-info.2026-05-12.log": {
+      "size": 110510,
+      "mtime": 1778583207.8793728,
+      "hash": ""
+    },
+    "wms-ruoyi-master/logs/sys-info.2026-05-13.log": {
+      "size": 6165,
+      "mtime": 1778638343.8532765,
+      "hash": ""
+    },
+    "wms-ruoyi-master/logs/sys-info.2026-05-14.log": {
+      "size": 97204,
+      "mtime": 1778752660.9040751,
+      "hash": ""
+    },
     "wms-ruoyi-master/logs/sys-info.log": {
-      "size": 95119,
-      "mtime": 1778582409.9975624,
+      "size": 22372,
+      "mtime": 1778811023.1755927,
       "hash": ""
     },
     "wms-ruoyi-master/package-lock.json": {
@@ -2122,8 +2202,8 @@
       "hash": ""
     },
     "wms-ruoyi-master/pom.xml": {
-      "size": 18296,
-      "mtime": 1778315009.7116768,
+      "size": 18247,
+      "mtime": 1778717909.7690055,
       "hash": ""
     },
     "wms-ruoyi-master/README.md": {
@@ -2141,14 +2221,14 @@
       "mtime": 1773967842.7500713,
       "hash": ""
     },
-    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-console.2026-05-11.log": {
-      "size": 20083,
-      "mtime": 1778497027.669775,
+    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-console.2026-05-13.log": {
+      "size": 20078,
+      "mtime": 1778686430.0019593,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-console.log": {
-      "size": 16065,
-      "mtime": 1778571661.422879,
+      "size": 16060,
+      "mtime": 1778724863.886564,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-error.log": {
@@ -2166,9 +2246,19 @@
       "mtime": 1778497027.669775,
       "hash": ""
     },
-    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-info.log": {
+    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-info.2026-05-12.log": {
       "size": 12977,
       "mtime": 1778571661.422879,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-info.2026-05-13.log": {
+      "size": 16218,
+      "mtime": 1778686430.0019593,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-admin-wms/logs/sys-info.log": {
+      "size": 12972,
+      "mtime": 1778724863.886564,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/pom.xml": {
@@ -2371,6 +2461,16 @@
       "mtime": 1773967843.2526102,
       "hash": ""
     },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/bo/RepairLogisticsOrderBo.java": {
+      "size": 2186,
+      "mtime": 1778582976.184823,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/bo/RepairLogisticsOrderDetailBo.java": {
+      "size": 1470,
+      "mtime": 1778582982.203072,
+      "hash": ""
+    },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/bo/RepairNoticeBo.java": {
       "size": 7342,
       "mtime": 1778148333.4762356,
@@ -2501,6 +2601,16 @@
       "mtime": 1773967843.5049748,
       "hash": ""
     },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/entity/RepairLogisticsOrder.java": {
+      "size": 1839,
+      "mtime": 1778582962.3526745,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/entity/RepairLogisticsOrderDetail.java": {
+      "size": 1292,
+      "mtime": 1778582968.7545142,
+      "hash": ""
+    },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/entity/RepairNotice.java": {
       "size": 3902,
       "mtime": 1778207475.6815822,
@@ -2592,8 +2702,8 @@
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/ItemSkuQrPreVo.java": {
-      "size": 865,
-      "mtime": 1778034521.076054,
+      "size": 1588,
+      "mtime": 1778811580.4877515,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/ItemSkuVo.java": {
@@ -2636,9 +2746,19 @@
       "mtime": 1773967843.865335,
       "hash": ""
     },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairLogisticsOrderDetailVo.java": {
+      "size": 1430,
+      "mtime": 1778582996.9214072,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairLogisticsOrderVo.java": {
+      "size": 3064,
+      "mtime": 1778582991.3341951,
+      "hash": ""
+    },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairNoticeCheckDetailVo.java": {
-      "size": 1392,
-      "mtime": 1778468838.5426748,
+      "size": 2772,
+      "mtime": 1778678296.8891094,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/domain/vo/RepairNoticeDetailVo.java": {
@@ -2827,8 +2947,8 @@
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ItemSkuQrPreService.java": {
-      "size": 10621,
-      "mtime": 1778034537.9239798,
+      "size": 12563,
+      "mtime": 1778811630.968191,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ItemSkuService.java": {
@@ -2857,8 +2977,8 @@
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReceiptOrderService.java": {
-      "size": 14198,
-      "mtime": 1778570188.3519342,
+      "size": 14292,
+      "mtime": 1778671480.0749764,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeDetailService.java": {
@@ -2867,8 +2987,8 @@
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/RepairNoticeService.java": {
-      "size": 40391,
-      "mtime": 1778570981.596556,
+      "size": 35433,
+      "mtime": 1778717992.9492862,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-admin-wms/src/main/java/com/ruoyi/wms/service/ReturnNoticeService.java": {
@@ -3061,9 +3181,9 @@
       "mtime": 1773967849.3649788,
       "hash": ""
     },
-    "wms-ruoyi-master/ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java": {
-      "size": 15037,
-      "mtime": 1778553263.6858726,
+    "wms-ruoyi-master/ruoyi-admin-wms/src/test/java/com/ruoyi/wms/service/RepairNoticeServiceTest.java.disabled": {
+      "size": 22022,
+      "mtime": 1778671074.928759,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-common/pom.xml": {
@@ -4039,6 +4159,11 @@
     "wms-ruoyi-master/ruoyi-common/ruoyi-common-redis/src/main/java/com/ruoyi/common/redis/utils/RedisUtils.java": {
       "size": 15210,
       "mtime": 1773967856.506219,
+      "hash": ""
+    },
+    "wms-ruoyi-master/ruoyi-common/ruoyi-common-redis/src/main/java/com/ruoyi/common/redis/utils/RepairLogisticsOrderNoUtils.java": {
+      "size": 2210,
+      "mtime": 1778582703.3343012,
       "hash": ""
     },
     "wms-ruoyi-master/ruoyi-common/ruoyi-common-redis/src/main/java/com/ruoyi/common/redis/utils/RepairNoticeNoUtils.java": {
@@ -5436,14 +5561,54 @@
       "mtime": 1778207461.4897084,
       "hash": ""
     },
+    "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_dict.sql": {
+      "size": 4144,
+      "mtime": 1778582649.3477004,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_menu.sql": {
+      "size": 5747,
+      "mtime": 1778582665.5264008,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260512_repair_logistics_order_tables.sql": {
+      "size": 4166,
+      "mtime": 1778582614.338842,
+      "hash": ""
+    },
     "wms-ruoyi-master/script/sql/20260512_repair_notice_menu.sql": {
-      "size": 4445,
-      "mtime": 1778570468.41846,
+      "size": 5565,
+      "mtime": 1778642982.28663,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260512_return_notice_dict.sql": {
+      "size": 4140,
+      "mtime": 1778582516.2430446,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260512_return_notice_menu.sql": {
+      "size": 6465,
+      "mtime": 1778582537.4594407,
       "hash": ""
     },
     "wms-ruoyi-master/script/sql/20260512_return_notice_tables.sql": {
       "size": 4529,
       "mtime": 1778582478.506965,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260514_add_return_notice_dict.sql": {
+      "size": 4365,
+      "mtime": 1778717722.9779806,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260514_fix_menu_duplicate_and_move_return_notice.sql": {
+      "size": 1598,
+      "mtime": 1778751701.6244905,
+      "hash": ""
+    },
+    "wms-ruoyi-master/script/sql/20260514_merge_all.sql": {
+      "size": 21590,
+      "mtime": 1778753837.734124,
       "hash": ""
     },
     "wms-ruoyi-master/script/sql/wms.sql": {
@@ -5468,7 +5633,7 @@
     },
     "~$\u89c4\u52122(1).docx": {
       "size": 162,
-      "mtime": 1777539848.579137,
+      "mtime": 1778729393.9339485,
       "hash": ""
     },
     "\u6d41\u7a0b\u89c4\u52122(1).docx": {
