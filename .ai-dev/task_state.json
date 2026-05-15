@@ -34,12 +34,14 @@
     "notes": null
   },
   "task-frontend-qr-category-column": {
-    "status": "in_progress",
+    "status": "completed",
     "started_at": "2026-05-15T10:20:55.926331",
-    "completed_at": null,
+    "completed_at": "2026-05-15T10:21:38.474929",
     "retries": 0,
-    "commit_hash": null,
-    "output_files_produced": [],
+    "commit_hash": "18d49f5e",
+    "output_files_produced": [
+      "ruo-yi-wms-vue-master/src/views/wms/basic/item/components/ItemQrGenerateDialog.vue"
+    ],
     "error_message": null,
     "notes": null
   },
